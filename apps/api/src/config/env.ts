@@ -26,7 +26,7 @@ const defaultCorsOrigins = [
 
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? 'development',
-  port: Number(process.env.API_PORT ?? 4000),
+  port: Number(process.env.PORT ?? process.env.API_PORT ?? 4000),
   databaseUrl: requireEnv('DATABASE_URL'),
   databaseUrlUnpooled: process.env.DATABASE_URL_UNPOOLED,
   jwtSecret: requireEnv('JWT_SECRET'),
