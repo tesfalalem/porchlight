@@ -52,8 +52,17 @@ export function getApiErrorMessage(error: unknown): string {
     if (!error.response) {
       return 'Cannot reach the API. Confirm the backend is running on port 4000.';
     }
-    const msg = error.response.data as { message?: string } | undefined;
-    return msg?.message ?? error.message ?? 'Something went wrong';
+    const data = error.response.data as { message?: string; errors?: Record<string, string[]> } | undefined;
+    if (data?.errors && typeof data.errors === 'object') {
+      const details = Object.entries(data.errors)
+        .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : String(v)}`)
+        .join('; ');
+      return details ? `${data.message || 'Validation failed'} (${details})` : (data.message ?? 'Validation failed');
+    }
+    return data?.message ?? error.message ?? 'Something went wrong';
+  }
+  if (error instanceof Error) {
+    return error.message;
   }
   return 'Something went wrong';
 }

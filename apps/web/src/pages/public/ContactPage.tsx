@@ -8,83 +8,123 @@ export function ContactPage() {
 
   return (
     <div>
-      {/* Header — plain text, no card */}
-      <div className="mx-auto max-w-7xl px-3 pt-8 sm:px-6 sm:pt-14 lg:px-8">
-        <p className="text-[9px] font-bold uppercase tracking-widest text-accent sm:text-xs">Reach Out</p>
-        <h1 className="mt-1.5 font-display text-2xl font-extrabold tracking-tight text-navy-950 sm:mt-3 sm:text-5xl">Contact Us</h1>
-        <div className="mt-1.5 h-0.5 w-8 rounded-full bg-accent sm:mt-3 sm:h-1 sm:w-16" />
-        <p className="mt-3 max-w-xl text-sm text-slate-500 sm:mt-4 sm:text-lg">
+      {/* Header */}
+      <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 sm:pt-14 lg:px-8">
+        <p className="text-xs font-bold uppercase tracking-widest text-accent">Reach Out</p>
+        <h1 className="mt-2 font-display text-3xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">Contact Us</h1>
+        <div className="mt-2 h-1 w-12 rounded-full bg-accent" />
+        <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
           Questions about availability, pricing, or viewing? Our team is ready to help.
         </p>
       </div>
 
       <div className="bg-slate-50 py-8 sm:py-16">
-        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-3 sm:gap-10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
 
-            {/* Left — Info */}
-            <div className="space-y-5">
-              {/* Contact cards */}
-              {[
-                { icon: MapPin, label: 'Address', value: COMPANY.address, href: undefined },
-                { icon: Phone, label: 'Phone', value: COMPANY.phone, href: `tel:${COMPANY.phone}` },
-                { icon: Mail, label: 'Email', value: COMPANY.email, href: `mailto:${COMPANY.email}` },
-                {
-                  icon: MessageCircle,
-                  label: 'WhatsApp',
-                  value: 'Message on WhatsApp',
-                  href: `https://wa.me/${COMPANY.whatsapp.replace(/\D/g, '')}`,
-                  external: true,
-                },
-                { icon: Clock, label: 'Working Hours', value: COMPANY.workingHours, href: undefined },
-              ].map(({ icon: Icon, label, value, href, external }) => (
-                <div key={label} className="flex items-start gap-2 rounded-lg border border-slate-200 bg-white p-2.5 shadow-sm sm:gap-4 sm:rounded-2xl sm:p-5">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent sm:h-10 sm:w-10 sm:rounded-xl">
-                    <Icon className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-[8px] font-bold uppercase tracking-wider text-slate-400 sm:text-xs">{label}</p>
-                    {href ? (
-                      <a
-                        href={href}
-                        target={external ? '_blank' : undefined}
-                        rel={external ? 'noreferrer' : undefined}
-                        className="mt-0.5 block truncate text-[10px] font-semibold text-navy-950 transition hover:text-accent sm:mt-1 sm:text-base"
-                      >
-                        {value}
-                      </a>
-                    ) : (
-                      <p className="mt-0.5 text-[10px] font-medium text-slate-700 sm:mt-1 sm:text-base">{value}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-
-              {/* Map */}
-              <div className="overflow-hidden rounded-2xl border border-slate-200 shadow-sm">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.677421793918!2d38.78397397483259!3d9.00180039105844!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b85771a56ea35%3A0xba9aa88b7ce682!2sPorchlight%20apartments!5e0!3m2!1sen!2set!4v1789989139257!5m2!1sen!2set"
-                  width="100%"
-                  height="220"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  title="Porchlight Apartments location"
-                />
-            </div>
-            </div>
-
-            {/* Right — Form */}
-            <div className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm sm:rounded-2xl sm:p-8">
-              <p className="text-[9px] font-bold uppercase tracking-widest text-accent sm:text-xs">Send a Message</p>
-              <h2 className="mt-1.5 font-display text-lg font-extrabold tracking-tight text-navy-950 sm:mt-3 sm:text-3xl">
+            {/* ── 1. SEND A MESSAGE (FORM COMES FIRST) ── */}
+            <div className="rounded-2xl sm:rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8 lg:col-span-7">
+              <p className="text-xs font-bold uppercase tracking-widest text-accent">Send a Message</p>
+              <h2 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-navy-950 sm:text-3xl">
                 Get in Touch
               </h2>
               <div className="mt-2 h-1 w-12 rounded-full bg-accent" />
               <p className="mt-3 text-sm text-slate-500">We respond within one business day.</p>
               <div className="mt-6">
                 <InquiryForm />
+              </div>
+            </div>
+
+            {/* ── 2 & 3. ADDRESS, CONTACT & MAP ── */}
+            <div className="space-y-6 lg:col-span-5">
+              {/* 2. Contact cards */}
+              <div className="space-y-3.5 sm:space-y-4">
+                {[
+                  {
+                    icon: MapPin,
+                    label: 'Address',
+                    value: COMPANY.address,
+                    href: 'https://maps.google.com/maps?ll=9.0018,38.786549&z=15&t=m&hl=en&gl=ET&mapclient=embed&cid=52524394353583746',
+                    external: true,
+                  },
+                  {
+                    icon: Phone,
+                    label: 'Phone',
+                    value: COMPANY.phone,
+                    href: `tel:${COMPANY.phone}`,
+                    external: false,
+                  },
+                  {
+                    icon: Mail,
+                    label: 'Email',
+                    value: COMPANY.email,
+                    href: `mailto:${COMPANY.email}`,
+                    external: false,
+                  },
+                  {
+                    icon: MessageCircle,
+                    label: 'WhatsApp',
+                    value: 'Message on WhatsApp',
+                    href: `https://wa.me/${COMPANY.whatsapp.replace(/\D/g, '')}`,
+                    external: true,
+                  },
+                  {
+                    icon: Clock,
+                    label: 'Working Hours',
+                    value: COMPANY.workingHours,
+                    href: undefined,
+                    external: false,
+                  },
+                ].map(({ icon: Icon, label, value, href, external }) => (
+                  <div key={label} className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{label}</p>
+                      {href ? (
+                        <a
+                          href={href}
+                          target={external ? '_blank' : undefined}
+                          rel={external ? 'noreferrer' : undefined}
+                          className="mt-0.5 block truncate text-sm font-bold text-navy-950 transition hover:text-accent sm:text-base"
+                        >
+                          {value}
+                        </a>
+                      ) : (
+                        <p className="mt-0.5 text-sm font-semibold text-slate-700 sm:text-base">{value}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 3. Map */}
+              <div className="overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200 bg-white shadow-sm">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.677421793918!2d38.78397397483259!3d9.00180039105844!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b85771a56ea35%3A0xba9aa88b7ce682!2sPorchlight%20apartments!5e0!3m2!1sen!2set!4v1789989139257!5m2!1sen!2set"
+                  width="100%"
+                  height="260"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  title="Porchlight Apartments location"
+                />
+                <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/80 px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-accent shrink-0" />
+                    <span className="text-xs font-semibold text-slate-700">Bole, Addis Ababa</span>
+                  </div>
+                  <a
+                    href="https://maps.google.com/maps?ll=9.0018,38.786549&z=15&t=m&hl=en&gl=ET&mapclient=embed&cid=52524394353583746"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-accent hover:text-accent-hover transition-colors"
+                  >
+                    Open in Google Maps
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -104,13 +144,6 @@ export function ContactPage() {
                   className="flex h-14 w-14 items-center justify-center rounded-full bg-[#1877F2] text-white shadow-md transition hover:-translate-y-1 hover:shadow-lg">
                   <svg className="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-                  </svg>
-                </a>
-                {/* WhatsApp */}
-                <a href={`https://wa.me/${COMPANY.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" aria-label="WhatsApp"
-                  className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-md transition hover:-translate-y-1 hover:shadow-lg">
-                  <svg className="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
                   </svg>
                 </a>
                 {/* Telegram */}

@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowLeft, Building2, Calendar, Check, ChevronRight, Copy, ExternalLink,
-  FileText, Mail, MessageCircle, MessageSquare, Pencil, Phone, Trash2,
-  User, X, AlertCircle
+  Mail, MessageCircle, Pencil, Phone, Trash2,
+  X, AlertCircle
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';

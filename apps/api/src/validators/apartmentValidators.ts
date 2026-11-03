@@ -15,7 +15,7 @@ const apartmentBodyFields = [
   body('size').optional({ nullable: true }).isFloat({ min: 0 }),
   body('price').isFloat({ min: 0 }).withMessage('Price must be a positive number'),
   body('availabilityStatus')
-    .isIn([...AVAILABILITY_STATUSES])
+    .isIn([...AVAILABILITY_STATUSES, 'Coming Soon'])
     .withMessage('Invalid availability status'),
   body('availableFrom').optional({ nullable: true }).isISO8601(),
   body('amenityIds').optional().isArray(),

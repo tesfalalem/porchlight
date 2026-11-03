@@ -41,7 +41,13 @@ function buildWhere(filters: ApartmentFilters) {
   if (filters.location) and.push({ location: { contains: filters.location, mode: 'insensitive' } });
   if (filters.bedrooms != null) and.push({ bedrooms: filters.bedrooms });
   if (filters.bathrooms != null) and.push({ bathrooms: filters.bathrooms });
-  if (filters.availabilityStatus) and.push({ availabilityStatus: filters.availabilityStatus });
+  if (filters.availabilityStatus) {
+    if (filters.availabilityStatus === 'Upcoming' || filters.availabilityStatus === 'Coming Soon') {
+      and.push({ availabilityStatus: { in: ['Upcoming', 'Coming Soon'] } });
+    } else {
+      and.push({ availabilityStatus: filters.availabilityStatus });
+    }
+  }
   if (filters.minPrice != null || filters.maxPrice != null) {
     and.push({
       price: {
@@ -80,8 +86,23 @@ export async function listApartments(filters: ApartmentFilters = {}) {
   const apartments = await prisma.apartment.findMany({
     where: buildWhere(filters),
     include: includeRelations,
-    orderBy: buildOrderBy(filters.sort),
+    orderBy: filters.sort === 'availability' ? undefined : buildOrderBy(filters.sort),
   });
+
+  if (filters.sort === 'availability') {
+    const orderMap: Record<string, number> = {
+      Available: 1,
+      Upcoming: 2,
+      'Coming Soon': 2,
+      Occupied: 3,
+    };
+    apartments.sort((a, b) => {
+      const orderA = orderMap[a.availabilityStatus] ?? 99;
+      const orderB = orderMap[b.availabilityStatus] ?? 99;
+      return orderA - orderB;
+    });
+  }
+
   return apartments.map(mapApartmentListItem);
 }
 

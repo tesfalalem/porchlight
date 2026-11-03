@@ -10,7 +10,6 @@ import { LoadingState } from '../../components/common/LoadingState';
 import { ErrorState } from '../../components/common/ErrorState';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { deleteInquiry, fetchInquiry, updateInquiry } from '../../services/inquiriesApi';
-import { formatPrice } from '../../utils/format';
 
 const INQUIRY_STATUSES = ['New', 'Contacted', 'In Progress', 'Resolved'] as const;
 

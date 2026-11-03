@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { UserPlus, Users, Clock, CheckCircle, Archive, Star } from 'lucide-react';
+import { UserPlus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { DataTable } from '../../components/admin/DataTable';

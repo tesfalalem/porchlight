@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Building2, Users, MessageSquare, CheckCircle, Clock, Archive, Home, TrendingUp } from 'lucide-react';
+import { Building2, Users, MessageSquare, CheckCircle, Clock, Home, TrendingUp } from 'lucide-react';
 import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Link } from 'react-router-dom';
 import { ErrorState } from '../../components/common/ErrorState';
@@ -9,6 +9,7 @@ import { fetchDashboardStats } from '../../services/dashboardApi';
 
 const AVAIL_COLORS: Record<string, string> = {
   Available:    '#10b981',
+  Upcoming:     '#f59e0b',
   Occupied:     '#087EAE',
   'Coming Soon': '#f59e0b',
   Unavailable:  '#ef4444',
@@ -45,8 +46,8 @@ export function DashboardPage() {
           {[
             { label: 'Total Units', value: s.totalApartments, icon: Home, color: 'bg-navy-900/8 text-navy-900' },
             { label: 'Available', value: s.available, icon: CheckCircle, color: 'bg-emerald-100 text-emerald-700' },
+            { label: 'Upcoming', value: s.upcoming ?? s.comingSoon, icon: Clock, color: 'bg-amber-100 text-amber-700' },
             { label: 'Occupied', value: s.occupied, icon: Building2, color: 'bg-sky-100 text-sky-700' },
-            { label: 'Coming Soon', value: s.comingSoon, icon: Clock, color: 'bg-amber-100 text-amber-700' },
           ].map(({ label, value, icon: Icon, color }) => (
             <Link key={label} to="/admin/apartments" className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-navy-900/20">
               <div className="flex items-center justify-between">

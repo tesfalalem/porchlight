@@ -6,7 +6,7 @@ export async function getDashboardStats(): Promise<DashboardStatsDto> {
     totalApartments,
     available,
     occupied,
-    comingSoon,
+    upcoming,
     totalCustomers,
     activeCustomers,
     inProcessCustomers,
@@ -19,7 +19,12 @@ export async function getDashboardStats(): Promise<DashboardStatsDto> {
     prisma.apartment.count({ where: { isArchived: false } }),
     prisma.apartment.count({ where: { isArchived: false, availabilityStatus: 'Available' } }),
     prisma.apartment.count({ where: { isArchived: false, availabilityStatus: 'Occupied' } }),
-    prisma.apartment.count({ where: { isArchived: false, availabilityStatus: 'Coming Soon' } }),
+    prisma.apartment.count({
+      where: {
+        isArchived: false,
+        availabilityStatus: { in: ['Upcoming', 'Coming Soon'] },
+      },
+    }),
     prisma.customer.count(),
     prisma.customer.count({ where: { notes: { contains: 'active', mode: 'insensitive' } } }),
     prisma.customer.count({ where: { notes: { contains: 'process', mode: 'insensitive' } } }),
@@ -38,11 +43,18 @@ export async function getDashboardStats(): Promise<DashboardStatsDto> {
     }),
   ]);
 
+  const availabilityCounts: Record<string, number> = {};
+  for (const g of availabilityGroups) {
+    const status = g.availabilityStatus === 'Coming Soon' ? 'Upcoming' : g.availabilityStatus;
+    availabilityCounts[status] = (availabilityCounts[status] || 0) + g._count.availabilityStatus;
+  }
+
   return {
     totalApartments,
     available,
+    upcoming,
     occupied,
-    comingSoon,
+    comingSoon: upcoming,
     totalCustomers,
     activeCustomers,
     inProcessCustomers,
@@ -52,10 +64,15 @@ export async function getDashboardStats(): Promise<DashboardStatsDto> {
       status: g.status as DashboardStatsDto['inquiriesByStatus'][0]['status'],
       count: g._count.status,
     })),
-    availabilityDistribution: availabilityGroups.map((g) => ({
-      status: g.availabilityStatus as DashboardStatsDto['availabilityDistribution'][0]['status'],
-      count: g._count.availabilityStatus,
-    })),
+    availabilityDistribution: Object.entries(availabilityCounts)
+      .map(([status, count]) => ({
+        status: status as DashboardStatsDto['availabilityDistribution'][0]['status'],
+        count,
+      }))
+      .sort((a, b) => {
+        const order: Record<string, number> = { Available: 1, Upcoming: 2, Occupied: 3 };
+        return (order[a.status] ?? 99) - (order[b.status] ?? 99);
+      }),
     recentInquiries: recentInquiryRows.map((i) => ({
       id: i.id,
       subject: i.subject,

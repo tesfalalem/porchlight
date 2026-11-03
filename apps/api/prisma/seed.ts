@@ -72,7 +72,7 @@ async function main() {
       bathrooms: 2,
       size: 95,
       price: 72000,
-      availabilityStatus: 'Coming Soon',
+      availabilityStatus: 'Upcoming',
       availableFrom: new Date('2026-11-01'),
       description:
         'Spacious two-bedroom corner unit with separate dining space, premium finishes, and in-unit laundry. Perfect for small families or shared living with room to work from home.',

@@ -81,6 +81,7 @@ export interface DashboardStatsDto {
   totalApartments: number;
   available: number;
   occupied: number;
+  upcoming: number;
   comingSoon: number;
   totalCustomers: number;
   activeCustomers: number;

@@ -1,175 +1,162 @@
-import { Compass, MapPin, Sparkles } from 'lucide-react';
+import { ArrowRight, Compass, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 
 const LIVING_IMAGE = '/building.jpg';
-const KITCHEN_IMAGE = '/kitchen.jpg';
 
 export function AboutPage() {
-  useDocumentTitle('Our Story — Porchlight Luxury Residences');
+  useDocumentTitle('About Us — Porchlight Luxury Residences');
 
   return (
     <div className="bg-white">
 
-      {/* ── 1. EDITORIAL HEADER ── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-slate-50/80 via-white to-white pb-16 pt-16 sm:pb-24 sm:pt-24 border-b border-slate-200/80">
-        {/* Subtle ambient lighting */}
-        <div className="pointer-events-none absolute -left-40 top-0 h-96 w-96 rounded-full bg-accent/5 blur-3xl" />
-        <div className="pointer-events-none absolute -right-40 top-20 h-96 w-96 rounded-full bg-sky-400/5 blur-3xl" />
+      {/* ── 1. HEADER (Matches ContactPage styling exactly) ── */}
+      <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 sm:pt-14 lg:px-8">
+        <p className="text-xs font-bold uppercase tracking-widest text-accent">Our Story</p>
+        <h1 className="mt-2 font-display text-3xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">
+          About Us
+        </h1>
+        <div className="mt-2 h-1 w-12 rounded-full bg-accent" />
+        <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
+          A sanctuary of comfort, style, and peace of mind in Bole, Addis Ababa.
+        </p>
+      </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-3xl text-center">
-            {/* Top Badge */}
-            <div className="inline-flex items-center gap-2.5 rounded-full border border-accent/25 bg-accent/10 px-4 py-1.5 shadow-sm">
-              <Sparkles className="h-3.5 w-3.5 text-accent" />
-              <span className="text-xs font-bold uppercase tracking-wider text-accent">
-                About Porchlight · Established in Bole
-              </span>
+      {/* ── 2. OUR APARTMENTS (2-Column layout matching screenshot) ── */}
+      <section className="py-12 sm:py-20 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Centered Title with Accent Underline */}
+          <div className="text-center">
+            <h2 className="font-display text-3xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">
+              Our Apartments
+            </h2>
+            <div className="mx-auto mt-3 h-1 w-16 rounded-full bg-accent" />
+          </div>
+
+          {/* 2-Column Content: Image Left, Text Right */}
+          <div className="mt-12 sm:mt-16 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+            {/* Left Column: Image */}
+            <div className="lg:col-span-6">
+              <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-slate-100 shadow-xl shadow-navy-950/5">
+                <img
+                  src={LIVING_IMAGE}
+                  alt="Porchlight luxury furnished apartment interior"
+                  className="h-full w-full object-cover aspect-[4/3] sm:aspect-[16/11] transition-transform duration-700 ease-out hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
             </div>
 
-            {/* Title */}
-            <h1 className="mt-6 font-display text-4xl font-extrabold leading-[1.12] tracking-tight text-navy-950 sm:text-6xl lg:text-7xl">
-              A sanctuary of comfort, style, and{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-blue-700">
-                peace of mind
-              </span>{' '}
-              in Addis Ababa.
-            </h1>
+            {/* Right Column: Exact User Copy */}
+            <div className="lg:col-span-6 space-y-6">
+              <h3 className="font-display text-2xl font-bold text-navy-950 sm:text-3xl lg:text-4xl leading-snug">
+                Built around the feeling of home.
+              </h3>
 
-            {/* Subtitle */}
-            <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">
+              <p className="text-base sm:text-lg leading-relaxed text-slate-600">
+                Porchlight is a collection of 24 fully furnished apartments in Bole, Addis Ababa. Our 16 two-bedroom apartments and eight three-bedroom apartments each come with two bathrooms, giving you a choice of spaces for your stay.
+              </p>
+
+              <p className="text-base sm:text-lg leading-relaxed text-slate-600">
+                There's room to spend time together and room for privacy. Whether you're visiting with family, travelling with friends, or staying alongside colleagues, you can find a space that fits.
+              </p>
+
+              <div className="pt-2">
+                <Link
+                  to="/apartments"
+                  className="inline-flex items-center gap-2.5 rounded-xl bg-accent px-7 py-3.5 text-sm sm:text-base font-bold text-white shadow-lg shadow-accent/25 transition-all duration-200 hover:bg-accent-hover hover:scale-105 active:scale-95"
+                >
+                  <span>Explore the apartment options</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 3. WHO WE ARE (Matches screenshot structure & preserves Porchlight story) ── */}
+      <section className="py-16 sm:py-24 bg-slate-50/70 border-t border-slate-200/80">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Centered Title with Accent Underline */}
+          <div className="text-center">
+            <h2 className="font-display text-3xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">
+              Who We Are
+            </h2>
+            <div className="mx-auto mt-3 h-1 w-16 rounded-full bg-accent" />
+            <p className="mx-auto mt-5 max-w-3xl text-base sm:text-lg leading-relaxed text-slate-600">
               Porchlight was founded with a singular conviction: that finding a furnished residence in Addis Ababa should never mean compromising on dependable infrastructure, residential tranquility, or genuine hospitality.
             </p>
           </div>
 
-          {/* Dual-Visual Frame */}
-          <div className="mt-14 grid gap-6 sm:mt-20 md:grid-cols-12 md:items-end">
-            {/* Large Living Visual (7 cols) */}
-            <div className="group relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-2xl shadow-navy-950/8 md:col-span-7">
-              <div className="aspect-[4/3] overflow-hidden bg-slate-100 sm:aspect-[16/11]">
-                <img
-                  src={LIVING_IMAGE}
-                  alt="Porchlight luxury furnished dining and living area"
-                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/70 via-navy-950/10 to-transparent" />
+          {/* Stats Grid */}
+          <div className="mt-12 rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-10 shadow-xl shadow-navy-950/5">
+            <div className="grid grid-cols-2 gap-6 md:grid-cols-4 md:divide-x md:divide-slate-100">
+              <div className="text-center sm:px-4">
+                <p className="font-display text-4xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">24</p>
+                <p className="mt-1.5 text-xs font-bold uppercase tracking-wider text-accent">Curated Residences</p>
+                <p className="mt-0.5 text-xs text-slate-400">Exclusively in Bole</p>
               </div>
-              <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between rounded-2xl border border-white/20 bg-navy-950/80 p-4 text-white backdrop-blur-md">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-sky-400">The Living Canvas</p>
-                  <p className="font-display text-base font-bold text-white sm:text-lg">Warm, Light-Filled Social Spaces</p>
-                </div>
-                <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200">
-                  Unit 204
-                </span>
-              </div>
-            </div>
 
-            {/* Secondary Kitchen/Island Visual (5 cols) */}
-            <div className="group relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-xl shadow-navy-950/8 md:col-span-5">
-              <div className="aspect-[4/3] overflow-hidden bg-slate-100 sm:aspect-[16/13]">
-                <img
-                  src={KITCHEN_IMAGE}
-                  alt="Porchlight chef's kitchen with granite island"
-                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/70 via-navy-950/10 to-transparent" />
+              <div className="text-center sm:px-4">
+                <p className="font-display text-4xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">2 & 3</p>
+                <p className="mt-1.5 text-xs font-bold uppercase tracking-wider text-accent">Bedroom Suites</p>
+                <p className="mt-0.5 text-xs text-slate-400">Each with 2 Bathrooms</p>
               </div>
-              <div className="absolute bottom-5 left-5 right-5 flex items-center justify-between rounded-2xl border border-white/20 bg-navy-950/80 p-4 text-white backdrop-blur-md">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-sky-400">Culinary Craft</p>
-                  <p className="font-display text-base font-bold text-white sm:text-lg">Full Chef's Kitchen & Island</p>
-                </div>
-                <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200">
-                  Move-in Ready
-                </span>
+
+              <div className="text-center sm:px-4">
+                <p className="font-display text-4xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">100%</p>
+                <p className="mt-1.5 text-xs font-bold uppercase tracking-wider text-accent">Power & Water</p>
+                <p className="mt-0.5 text-xs text-slate-400">Uninterrupted Backup</p>
+              </div>
+
+              <div className="text-center sm:px-4">
+                <p className="font-display text-4xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">24/7</p>
+                <p className="mt-1.5 text-xs font-bold uppercase tracking-wider text-accent">Concierge & Security</p>
+                <p className="mt-0.5 text-xs text-slate-400">Guarded Private Access</p>
               </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* ── 2. PROPERTY BY THE NUMBERS (STAT BAR) ── */}
-      <section className="relative -mt-10 z-20 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl border border-slate-200/90 bg-white p-6 sm:p-10 shadow-2xl shadow-navy-950/8">
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-4 md:divide-x md:divide-slate-100">
-            {/* Stat 1 */}
-            <div className="text-center sm:px-4">
-              <p className="font-display text-4xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">24</p>
-              <p className="mt-1.5 text-xs font-bold uppercase tracking-wider text-accent">Curated Residences</p>
-              <p className="mt-0.5 text-xs text-slate-400">Exclusively in Bole</p>
-            </div>
-
-            {/* Stat 2 */}
-            <div className="text-center sm:px-4">
-              <p className="font-display text-4xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">2 & 3</p>
-              <p className="mt-1.5 text-xs font-bold uppercase tracking-wider text-accent">Bedroom Suites</p>
-              <p className="mt-0.5 text-xs text-slate-400">Each with 2 Bathrooms</p>
-            </div>
-
-            {/* Stat 3 */}
-            <div className="text-center sm:px-4">
-              <p className="font-display text-4xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">100%</p>
-              <p className="mt-1.5 text-xs font-bold uppercase tracking-wider text-accent">Power & Water</p>
-              <p className="mt-0.5 text-xs text-slate-400">Uninterrupted Backup</p>
-            </div>
-
-            {/* Stat 4 */}
-            <div className="text-center sm:px-4">
-              <p className="font-display text-4xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">24/7</p>
-              <p className="mt-1.5 text-xs font-bold uppercase tracking-wider text-accent">Concierge & Security</p>
-              <p className="mt-0.5 text-xs text-slate-400">Guarded Private Access</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 3. "THE BOLE NEIGHBORHOOD" FEATURE ── */}
-      <section className="py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
-
-            {/* Left Narrative (7 cols) */}
+          {/* Neighborhood & Address */}
+          <div className="mt-16 grid gap-12 lg:grid-cols-12 lg:items-center">
+            {/* Left Narrative */}
             <div className="lg:col-span-7 space-y-6">
               <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-1 text-xs font-bold text-slate-700 shadow-sm">
                 <Compass className="h-3.5 w-3.5 text-accent" />
                 Neighborhood & Address
               </div>
 
-              <h2 className="font-display text-3xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">
+              <h3 className="font-display text-3xl font-extrabold tracking-tight text-navy-950 sm:text-4xl">
                 The Bole Advantage:<br />
                 <span className="text-accent">Addis Ababa’s Most Coveted District</span>
-              </h2>
+              </h3>
 
               <p className="text-base leading-relaxed text-slate-600 sm:text-lg">
                 Location shapes how you experience a city. Situated in Bole, Porchlight places you in the diplomatic, business, and culinary nexus of the capital, while remaining tucked away on a quiet residential street that shelters you from traffic and commotion.
               </p>
 
-              <p className="text-sm leading-relaxed text-slate-500">
-                Stroll to artisan Ethiopian roasters like Tomoca and Kaldi’s, international restaurants, organic supermarkets, and boutique fitness studios. When duty calls, the airport and major multinational headquarters are just minutes away.
-              </p>
-
-              {/* Quick feature checklist */}
-              <div className="grid grid-cols-2 gap-3 pt-2 sm:grid-cols-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                 <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
-                  <p className="text-xs font-bold text-navy-950">✈️ Bole Int. Airport</p>
-                  <p className="text-[11px] text-slate-400">8 minutes direct drive</p>
+                  <p className="text-sm font-bold text-navy-950">✈️ Bole Int. Airport</p>
+                  <p className="text-xs text-slate-500">8 minutes direct drive</p>
                 </div>
                 <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
-                  <p className="text-xs font-bold text-navy-950">🏛️ UNECA & AU HQ</p>
-                  <p className="text-[11px] text-slate-400">10-14 minutes corridor</p>
+                  <p className="text-sm font-bold text-navy-950">🏛️ UNECA & AU HQ</p>
+                  <p className="text-xs text-slate-500">10-14 minutes corridor</p>
                 </div>
                 <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
-                  <p className="text-xs font-bold text-navy-950">☕ Medhanialem Cafés</p>
-                  <p className="text-[11px] text-slate-400">4 minutes walking distance</p>
+                  <p className="text-sm font-bold text-navy-950">☕ Medhanialem Cafés</p>
+                  <p className="text-xs text-slate-500">4 minutes walking distance</p>
                 </div>
                 <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
-                  <p className="text-xs font-bold text-navy-950">🏥 Premier Healthcare</p>
-                  <p className="text-[11px] text-slate-400">Nordic & Korean Hospitals</p>
+                  <p className="text-sm font-bold text-navy-950">🏥 Premier Healthcare</p>
+                  <p className="text-xs text-slate-500">Nordic & Korean Hospitals</p>
                 </div>
               </div>
             </div>
 
-            {/* Right Map Card (5 cols) */}
+            {/* Right Map Card */}
             <div className="lg:col-span-5">
               <div className="relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white shadow-xl shadow-navy-950/8">
                 <iframe
@@ -191,8 +178,8 @@ export function AboutPage() {
                 </div>
               </div>
             </div>
-
           </div>
+
         </div>
       </section>
 

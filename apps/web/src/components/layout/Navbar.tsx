@@ -1,5 +1,6 @@
+import { COMPANY } from '@porchlight/shared';
 import clsx from 'clsx';
-import { Menu, X } from 'lucide-react';
+import { ArrowRight, Menu, MessageCircle, Phone, X } from 'lucide-react';
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
@@ -15,7 +16,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 bg-navy-900 text-cream">
-      <div className="relative mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+      <div className="relative mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
 
         {/* Left — branding */}
         <Link to="/" className="flex flex-col items-start">
@@ -49,7 +50,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="text-cream"
+            className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-cream transition active:scale-95"
             aria-expanded={open}
             aria-label={open ? 'Close menu' : 'Open menu'}
           >
@@ -59,8 +60,8 @@ export function Navbar() {
       </div>
 
       {open ? (
-        <nav className="editorial-panel border-t border-cream/10 px-6 py-6 lg:hidden" aria-label="Mobile">
-          <ul className="space-y-4">
+        <nav className="border-t border-cream/10 bg-navy-950/95 px-5 py-6 backdrop-blur-xl lg:hidden" aria-label="Mobile">
+          <ul className="space-y-1">
             {links.map(({ to, label }) => (
               <li key={to}>
                 <NavLink
@@ -69,16 +70,40 @@ export function Navbar() {
                   onClick={() => setOpen(false)}
                   className={({ isActive }) =>
                     clsx(
-                      'font-display text-2xl tracking-wide',
-                      isActive ? 'text-sage' : 'text-cream',
+                      'flex items-center justify-between rounded-xl px-4 py-3 font-display text-xl tracking-wide transition-colors',
+                      isActive ? 'bg-white/10 text-sage font-bold' : 'text-cream/90 hover:bg-white/5 hover:text-cream',
                     )
                   }
                 >
-                  {label}
+                  <span>{label}</span>
+                  <ArrowRight className="h-4 w-4 opacity-40" />
                 </NavLink>
               </li>
             ))}
           </ul>
+
+          {/* Quick-contact mobile shortcuts */}
+          <div className="mt-6 border-t border-cream/10 pt-5">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Quick Inquiries</p>
+            <div className="grid grid-cols-2 gap-2.5">
+              <a
+                href={`tel:${COMPANY.phone}`}
+                className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-3 text-xs font-bold text-cream transition active:scale-95"
+              >
+                <Phone className="h-3.5 w-3.5 text-accent" />
+                Call Desk
+              </a>
+              <a
+                href={`https://wa.me/${COMPANY.whatsapp.replace(/\D/g, '')}`}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center justify-center gap-2 rounded-xl bg-emerald-600/90 py-3 text-xs font-bold text-white shadow-sm transition active:scale-95"
+              >
+                <MessageCircle className="h-3.5 w-3.5" />
+                WhatsApp
+              </a>
+            </div>
+          </div>
         </nav>
       ) : null}
     </header>

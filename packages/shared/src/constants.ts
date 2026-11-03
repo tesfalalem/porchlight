@@ -1,7 +1,7 @@
 export const AVAILABILITY_STATUSES = [
   'Available',
+  'Upcoming',
   'Occupied',
-  'Coming Soon',
 ] as const;
 
 export const INQUIRY_STATUSES = [

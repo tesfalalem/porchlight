@@ -14,23 +14,23 @@ export function SocialFollowSection() {
         <p className="mt-2 text-xs text-slate-300 sm:mt-4 sm:text-base">
           Follow us on social media for the latest updates and available units.
         </p>
-        <div className="mt-4 flex flex-wrap justify-center gap-2 sm:mt-8 sm:gap-4">
+        <div className="mt-5 flex flex-col sm:flex-row justify-center gap-3 sm:mt-8 sm:gap-4">
           <a
             href={COMPANY.social.facebook}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-lg border-2 border-[#1877F2] bg-[#1877F2] px-4 py-2 text-[11px] font-bold text-white transition-all hover:bg-[#166fe0] sm:gap-3 sm:rounded-xl sm:px-8 sm:py-4 sm:text-sm"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-[#1877F2] bg-[#1877F2] px-6 py-3 text-xs font-bold text-white shadow-md transition-all hover:bg-[#166fe0] sm:w-auto sm:gap-3 sm:px-8 sm:py-3.5 sm:text-sm"
           >
-            <Facebook className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
+            <Facebook className="h-4 w-4 sm:h-5 sm:w-5" />
             Facebook
           </a>
           <a
             href={COMPANY.social.instagram}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-lg border-2 border-[#E1306C] bg-transparent px-4 py-2 text-[11px] font-bold text-white transition-all hover:bg-[#E1306C] sm:gap-3 sm:rounded-xl sm:px-8 sm:py-4 sm:text-sm"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-[#E1306C] bg-transparent px-6 py-3 text-xs font-bold text-white shadow-md transition-all hover:bg-[#E1306C] sm:w-auto sm:gap-3 sm:px-8 sm:py-3.5 sm:text-sm"
           >
-            <Instagram className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
+            <Instagram className="h-4 w-4 sm:h-5 sm:w-5" />
             Instagram
           </a>
         </div>

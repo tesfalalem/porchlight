@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AVAILABILITY_STATUSES } from '@porchlight/shared';
 import {
-  ArrowLeft, Bath, BedDouble, Calendar, Check, ChevronRight, DollarSign,
-  ExternalLink, ImagePlus, Layers, MapPin, Maximize2, MessageSquare,
-  Pencil, Save, Trash2, X, AlertCircle
+  ArrowLeft, Bath, BedDouble, Check, ChevronRight, DollarSign,
+  ExternalLink, ImagePlus, MapPin, Maximize2,
+  Pencil, Trash2, X, AlertCircle
 } from 'lucide-react';
 import { useState, useRef } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';

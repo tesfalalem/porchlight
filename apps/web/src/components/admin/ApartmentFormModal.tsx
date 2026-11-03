@@ -1,4 +1,3 @@
-import { AVAILABILITY_STATUSES } from '@porchlight/shared';
 import type { AmenityDto, ApartmentDetailDto } from '@porchlight/shared';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ImagePlus, X } from 'lucide-react';
@@ -15,7 +14,7 @@ const schema = z.object({
   bedrooms: z.coerce.number().min(0),
   size: z.coerce.number().optional().nullable(),
   price: z.coerce.number().min(0),
-  availabilityStatus: z.enum(['Available', 'Occupied', 'Coming Soon']),
+  availabilityStatus: z.enum(['Available', 'Occupied', 'Upcoming', 'Coming Soon']),
   availableFrom: z.string().optional(),
   amenityIds: z.array(z.string()).optional(),
   imageUrls: z.string(),
@@ -169,7 +168,7 @@ export function ApartmentFormModal({
             Availability
             <select {...register('availabilityStatus')} className="mt-1 w-full rounded-lg border px-3 py-2">
               <option value="Available">Available Now</option>
-              <option value="Coming Soon">Available Later (set date below)</option>
+              <option value="Upcoming">Upcoming (set date below)</option>
               <option value="Occupied">Currently Unavailable</option>
             </select>
           </label>
