@@ -3,7 +3,13 @@ import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
 
 const apiRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-dotenv.config({ path: path.join(apiRoot, '.env') });
+const projectRoot = path.resolve(apiRoot, '../..');
+
+// Load environment variables (.env.local overrides .env; api overrides project root)
+dotenv.config({ path: path.join(projectRoot, '.env') });
+dotenv.config({ path: path.join(projectRoot, '.env.local'), override: true });
+dotenv.config({ path: path.join(apiRoot, '.env'), override: true });
+dotenv.config({ path: path.join(apiRoot, '.env.local'), override: true });
 
 function requireEnv(key: string): string {
   const value = process.env[key];
@@ -22,6 +28,7 @@ export const env = {
   nodeEnv: process.env.NODE_ENV ?? 'development',
   port: Number(process.env.API_PORT ?? 4000),
   databaseUrl: requireEnv('DATABASE_URL'),
+  databaseUrlUnpooled: process.env.DATABASE_URL_UNPOOLED,
   jwtSecret: requireEnv('JWT_SECRET'),
   corsOrigins: (process.env.CORS_ORIGIN ?? defaultCorsOrigins.join(','))
     .split(',')
