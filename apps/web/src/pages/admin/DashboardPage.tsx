@@ -10,12 +10,12 @@ import { fetchDashboardStats } from '../../services/dashboardApi';
 const AVAIL_COLORS: Record<string, string> = {
   Available:    '#10b981',
   Upcoming:     '#f59e0b',
-  Occupied:     '#087EAE',
+  Occupied:     '#58595B',
   'Coming Soon': '#f59e0b',
   Unavailable:  '#ef4444',
 };
 
-const INQUIRY_COLORS = ['#345beb', '#0ea5e9', '#f59e0b', '#10b981', '#94a3b8'];
+const INQUIRY_COLORS = ['#960048', '#c4336e', '#f59e0b', '#10b981', '#94a3b8'];
 
 export function DashboardPage() {
   useDocumentTitle('Dashboard');
@@ -47,7 +47,7 @@ export function DashboardPage() {
             { label: 'Total Units', value: s.totalApartments, icon: Home, color: 'bg-navy-900/8 text-navy-900' },
             { label: 'Available', value: s.available, icon: CheckCircle, color: 'bg-emerald-100 text-emerald-700' },
             { label: 'Upcoming', value: s.upcoming ?? s.comingSoon, icon: Clock, color: 'bg-amber-100 text-amber-700' },
-            { label: 'Occupied', value: s.occupied, icon: Building2, color: 'bg-sky-100 text-sky-700' },
+            { label: 'Occupied', value: s.occupied, icon: Building2, color: 'bg-accent/10 text-accent' },
           ].map(({ label, value, icon: Icon, color }) => (
             <Link key={label} to="/admin/apartments" className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-navy-900/20">
               <div className="flex items-center justify-between">
@@ -101,7 +101,7 @@ export function DashboardPage() {
             <p className="text-3xl font-extrabold text-navy-900">{s.newInquiries}</p>
           </div>
           {s.newInquiries > 0 && (
-            <span className="ml-2 rounded-full bg-sky-100 px-3 py-1 text-xs font-bold text-sky-800">
+            <span className="ml-2 rounded-full bg-accent/10 px-3 py-1 text-xs font-bold text-accent">
               Needs attention
             </span>
           )}
@@ -195,7 +195,7 @@ export function DashboardPage() {
                 </div>
                 <div className="shrink-0 text-right">
                   <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-bold ${
-                    i.status === 'New' ? 'bg-sky-100 text-sky-800' :
+                    i.status === 'New' ? 'bg-accent/10 text-accent' :
                     i.status === 'Resolved' ? 'bg-emerald-100 text-emerald-800' :
                     i.status === 'Closed' ? 'bg-slate-100 text-slate-600' :
                     'bg-amber-100 text-amber-800'

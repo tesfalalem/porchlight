@@ -53,8 +53,6 @@ const APARTMENT_TYPES = [
   '3 Bedroom',
 ] as const;
 
-const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80';
-
 export function AddApartmentPage() {
   useDocumentTitle('Add New Apartment — Management');
   const navigate = useNavigate();
@@ -63,8 +61,6 @@ export function AddApartmentPage() {
 
   // Form State
   const [number, setNumber] = useState('');
-  const [name, setName] = useState('');
-  const [hasCustomName, setHasCustomName] = useState(false);
   const [type, setType] = useState('');
   const [location, setLocation] = useState('Bole, Addis Ababa');
   const [floor, setFloor] = useState('2');
@@ -78,15 +74,8 @@ export function AddApartmentPage() {
   const [availabilityStatus, setAvailabilityStatus] = useState<AvailabilityStatus>('Available');
   const [availableFrom, setAvailableFrom] = useState('');
 
-  // Images state
-  const [images, setImages] = useState<ImageItem[]>([
-    {
-      id: 'img-1',
-      url: DEFAULT_IMAGE,
-      alt: 'Living room view',
-      isPrimary: true,
-    },
-  ]);
+  // Images state — starts empty; cover photo is set from uploaded photos
+  const [images, setImages] = useState<ImageItem[]>([]);
   const [urlInput, setUrlInput] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -97,17 +86,9 @@ export function AddApartmentPage() {
     queryFn: () => fetchAmenities(),
   });
 
-  // Handle auto-naming when unit number changes unless user typed custom name
+  // Handle unit number change
   const handleNumberChange = (val: string) => {
     setNumber(val);
-    if (!hasCustomName) {
-      setName(val.trim() ? `Porchlight Suite ${val.trim()}` : '');
-    }
-  };
-
-  const handleNameChange = (val: string) => {
-    setName(val);
-    setHasCustomName(true);
   };
 
   // Image actions
@@ -181,7 +162,7 @@ export function AddApartmentPage() {
         throw new Error('Please select the number of bathrooms (2 or 3 Bathrooms)');
       }
 
-      const finalName = name.trim() || `Unit ${number.trim()}`;
+      const finalName = 'Porchlight Residence';
 
       return createApartment({
         name: finalName,
@@ -349,13 +330,10 @@ export function AddApartmentPage() {
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
                     Public Residence Name
                   </span>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => handleNameChange(e.target.value)}
-                    placeholder="e.g. Bole Skyline Suite"
-                    className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-navy-950 transition focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/15"
-                  />
+                  <div className="mt-1.5 flex w-full items-center rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-navy-950">
+                    Porchlight Residence
+                    <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-slate-400">Fixed</span>
+                  </div>
                 </label>
               </div>
 
@@ -550,8 +528,8 @@ export function AddApartmentPage() {
                       key: 'Occupied',
                       title: 'Occupied',
                       icon: Building2,
-                      activeCls: 'border-sky-500 bg-sky-50/50 text-sky-950 ring-2 ring-sky-500/20',
-                      badgeCls: 'bg-sky-100 text-sky-700',
+                      activeCls: 'border-accent bg-accent/5 text-navy-950 ring-2 ring-accent/20',
+                      badgeCls: 'bg-accent/10 text-accent',
                     },
                   ].map((s) => {
                     const Icon = s.icon;
@@ -732,7 +710,7 @@ export function AddApartmentPage() {
           <section className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-50 text-sky-600">
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent/10 text-accent">
                   <Sparkles className="h-4 w-4" />
                 </div>
                 <div>

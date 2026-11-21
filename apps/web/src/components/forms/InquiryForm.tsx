@@ -25,7 +25,7 @@ export function InquiryForm({
   onSuccess?: () => void;
 }) {
   const { data: apartments = [] } = useQuery({
-    queryKey: ['apartments', 'list'],
+    queryKey: ['apartments'],
     queryFn: () => fetchApartments(),
   });
 
@@ -113,7 +113,7 @@ export function InquiryForm({
       <button
         type="submit"
         disabled={mutation.isPending}
-        className="w-full rounded-xl bg-accent px-4 py-3 text-sm font-bold text-white shadow-sm shadow-blue-500/25 transition hover:bg-accent-hover disabled:opacity-60"
+        className="w-full rounded-xl bg-accent px-4 py-3 text-sm font-bold text-white shadow-sm shadow-accent/25 transition hover:bg-accent-hover disabled:opacity-60"
       >
         {mutation.isPending ? 'Sending…' : 'Send inquiry'}
       </button>

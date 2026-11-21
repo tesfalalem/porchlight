@@ -12,13 +12,20 @@ import {
 
 const MAP: Record<string, LucideIcon> = {
   car: Car,
+  parking: Car,
   wifi: Wifi,
   zap: Zap,
+  generator: Zap,
   shield: Shield,
+  security: Shield,
   camera: Camera,
+  cctv: Camera,
   shirt: Shirt,
+  laundry: Shirt,
   refrigerator: Refrigerator,
   wind: Wind,
+  'washer-dryer': Wind,
+  washerdryer: Wind,
 };
 
 export function getAmenityIcon(slugOrIcon: string | null | undefined): LucideIcon {

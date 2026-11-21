@@ -10,7 +10,7 @@ const styles: Record<string, { bg: string; dot: string }> = {
   Upcoming:     { bg: 'bg-white text-amber-700 border-amber-400 shadow-md', dot: 'bg-amber-500' },
   'Coming Soon':{ bg: 'bg-white text-amber-700 border-amber-400 shadow-md', dot: 'bg-amber-500' },
   Unavailable:  { bg: 'bg-white text-rose-700 border-rose-400 shadow-md', dot: 'bg-rose-500' },
-  New:          { bg: 'bg-sky-500/10 text-sky-800 border-sky-200/60 backdrop-blur-md', dot: 'bg-sky-500' },
+  New:          { bg: 'bg-accent/10 text-accent border-accent/30 backdrop-blur-md', dot: 'bg-accent' },
   Contacted:    { bg: 'bg-violet-500/10 text-violet-800 border-violet-200/60 backdrop-blur-md', dot: 'bg-violet-500' },
   'In Progress':{ bg: 'bg-amber-500/10 text-amber-900 border-amber-200/60 backdrop-blur-md', dot: 'bg-amber-500' },
   Resolved:     { bg: 'bg-emerald-500/10 text-emerald-800 border-emerald-200/60 backdrop-blur-md', dot: 'bg-emerald-500' },
@@ -31,11 +31,11 @@ export function StatusBadge({
   } else if (status === 'Available' && availableFrom) {
     label = `Available on ${formatDate(availableFrom)}`;
   } else if ((status === 'Upcoming' || status === 'Coming Soon') && availableFrom) {
-    label = `Upcoming (${formatDate(availableFrom)})`;
+    label = `Available from ${formatDate(availableFrom)}`;
   } else if (status === 'Upcoming' || status === 'Coming Soon') {
-    label = 'Upcoming';
+    label = 'Available Soon';
   } else if (status === 'Occupied') {
-    label = 'Currently Unavailable';
+    label = 'Currently Occupied';
   } else {
     label = status;
   }

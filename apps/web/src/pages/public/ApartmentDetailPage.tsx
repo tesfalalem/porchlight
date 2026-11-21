@@ -81,9 +81,10 @@ export function ApartmentDetailPage() {
 
   const apt = query.data;
 
-  // Similar apartments query
+  // Similar apartments — reuse the shared ['apartments'] cache populated by the
+  // listings pages so this never fires a duplicate network request.
   const similarQuery = useQuery({
-    queryKey: ['apartments', 'similar', apt?.type],
+    queryKey: ['apartments'],
     queryFn: () => fetchApartments(),
     enabled: Boolean(apt?.type),
   });
@@ -371,30 +372,6 @@ export function ApartmentDetailPage() {
                   <span>Open in Google Maps</span>
                   <ExternalLink className="h-3.5 w-3.5" />
                 </a>
-              </div>
-
-              {/* Commute Highlights */}
-              <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <div className="rounded-2xl border border-slate-100 bg-slate-50/80 p-3 text-center">
-                  <span className="text-lg">✈️</span>
-                  <p className="mt-1 font-bold text-navy-950 text-xs sm:text-sm">7 Mins</p>
-                  <p className="text-[10px] font-semibold text-slate-400">Bole Int'l Airport</p>
-                </div>
-                <div className="rounded-2xl border border-slate-100 bg-slate-50/80 p-3 text-center">
-                  <span className="text-lg">🛍️</span>
-                  <p className="mt-1 font-bold text-navy-950 text-xs sm:text-sm">3 Mins</p>
-                  <p className="text-[10px] font-semibold text-slate-400">Edna Mall & Cinema</p>
-                </div>
-                <div className="rounded-2xl border border-slate-100 bg-slate-50/80 p-3 text-center">
-                  <span className="text-lg">☕</span>
-                  <p className="mt-1 font-bold text-navy-950 text-xs sm:text-sm">2 Mins</p>
-                  <p className="text-[10px] font-semibold text-slate-400">Tomoca & Cafes</p>
-                </div>
-                <div className="rounded-2xl border border-slate-100 bg-slate-50/80 p-3 text-center">
-                  <span className="text-lg">🏥</span>
-                  <p className="mt-1 font-bold text-navy-950 text-xs sm:text-sm">5 Mins</p>
-                  <p className="text-[10px] font-semibold text-slate-400">Medical Clinics</p>
-                </div>
               </div>
 
               {/* Embedded Map */}

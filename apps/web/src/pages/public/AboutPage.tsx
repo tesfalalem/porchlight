@@ -135,25 +135,6 @@ export function AboutPage() {
               <p className="text-base leading-relaxed text-slate-600 sm:text-lg">
                 Location shapes how you experience a city. Situated in Bole, Porchlight places you in the diplomatic, business, and culinary nexus of the capital, while remaining tucked away on a quiet residential street that shelters you from traffic and commotion.
               </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
-                  <p className="text-sm font-bold text-navy-950">✈️ Bole Int. Airport</p>
-                  <p className="text-xs text-slate-500">8 minutes direct drive</p>
-                </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
-                  <p className="text-sm font-bold text-navy-950">🏛️ UNECA & AU HQ</p>
-                  <p className="text-xs text-slate-500">10-14 minutes corridor</p>
-                </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
-                  <p className="text-sm font-bold text-navy-950">☕ Medhanialem Cafés</p>
-                  <p className="text-xs text-slate-500">4 minutes walking distance</p>
-                </div>
-                <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
-                  <p className="text-sm font-bold text-navy-950">🏥 Premier Healthcare</p>
-                  <p className="text-xs text-slate-500">Nordic & Korean Hospitals</p>
-                </div>
-              </div>
             </div>
 
             {/* Right Map Card */}

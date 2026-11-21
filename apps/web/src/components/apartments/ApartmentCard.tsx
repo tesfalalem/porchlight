@@ -69,7 +69,7 @@ export function ApartmentCard({ apartment }: { apartment: ApartmentListItemDto }
 
         <Link
           to={`/apartments/${apartment.id}`}
-          className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-accent py-2.5 text-xs font-bold text-white shadow-sm shadow-blue-500/20 transition hover:bg-accent-hover active:scale-95"
+          className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-accent py-2.5 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:bg-accent-hover active:scale-95"
         >
           View Details
         </Link>

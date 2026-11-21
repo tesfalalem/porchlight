@@ -8,12 +8,30 @@
       name="description"
       content="Porchlight Apartment — modern furnished apartments in Bole, Addis Ababa, Ethiopia."
     />
+
+    <!-- Preload the hero image so the browser fetches it at the highest priority
+         before it discovers the <img> tag in the JS bundle. -->
+    <link rel="preload" as="image" href="/building.jpg" fetchpriority="high" />
+
+    <!-- Google Fonts: preconnect first, then load the stylesheet asynchronously
+         so it never blocks the first paint. Only the weights actually used in the
+         app are requested (removed unused italic variants). -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Non-render-blocking font load: media trick swaps to "all" once loaded -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+
     <title>Porchlight Apartment | Bole, Addis Ababa</title>
   </head>
   <body>

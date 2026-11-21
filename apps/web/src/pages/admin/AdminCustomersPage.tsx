@@ -17,7 +17,7 @@ type TabType = 'all' | 'active' | 'in-process' | 'past' | 'new';
 
 const TABS: { key: TabType; label: string; color: string }[] = [
   { key: 'all',        label: 'All',         color: '' },
-  { key: 'new',        label: 'New',         color: 'text-sky-700' },
+  { key: 'new',        label: 'New',         color: 'text-accent' },
   { key: 'in-process', label: 'In Process',  color: 'text-amber-700' },
   { key: 'active',     label: 'Active',      color: 'text-emerald-700' },
   { key: 'past',       label: 'Past',        color: 'text-slate-500' },
@@ -33,7 +33,7 @@ function getStatus(c: CustomerDto): TabType {
 
 const STATUS_BADGE: Record<TabType, string> = {
   all:          '',
-  new:          'bg-sky-100 text-sky-800',
+  new:          'bg-accent/10 text-accent',
   active:       'bg-emerald-100 text-emerald-800',
   'in-process': 'bg-amber-100 text-amber-800',
   past:         'bg-slate-100 text-slate-600',

@@ -111,8 +111,8 @@ const STAGES: {
     key: 'new',
     label: 'New Lead',
     sub: 'Inquiring or scheduling a property tour',
-    badgeCls: 'bg-sky-100 text-sky-800',
-    activeCls: 'border-sky-500 bg-sky-50/50 ring-2 ring-sky-500/20 text-sky-950',
+    badgeCls: 'bg-accent/10 text-accent',
+    activeCls: 'border-accent bg-accent/5 ring-2 ring-accent/20 text-navy-950',
   },
   {
     key: 'past',
@@ -562,7 +562,7 @@ export function AddCustomerPage() {
                       </div>
 
                       {apartmentAvailableYmd && (
-                        <span className="rounded-lg bg-sky-50 px-2.5 py-1 text-[11px] font-semibold text-sky-800 border border-sky-200">
+                        <span className="rounded-lg bg-accent/10 px-2.5 py-1 text-[11px] font-semibold text-accent border border-accent/20">
                           Unit Available From: {formatDateDisplay(apartmentAvailableYmd)}
                         </span>
                       )}
@@ -782,7 +782,7 @@ export function AddCustomerPage() {
 
               {/* Avatar + Name */}
               <div className="flex items-center gap-3.5">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-navy-950 to-blue-900 text-lg font-extrabold text-white shadow-md">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-navy-950 to-navy-800 text-lg font-extrabold text-white shadow-md">
                   {name
                     ? name
                         .split(' ')

@@ -24,7 +24,7 @@ function getCustomerStatus(notes: string | null | undefined): CustomerStatusType
 }
 
 const STATUS_BADGE: Record<CustomerStatusType, string> = {
-  new: 'bg-sky-50 text-sky-700 border-sky-200',
+  new: 'bg-accent/10 text-accent border-accent/30',
   active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   'in-process': 'bg-amber-50 text-amber-700 border-amber-200',
   past: 'bg-slate-100 text-slate-600 border-slate-200',
@@ -205,7 +205,7 @@ export function CustomerDetailPage() {
 
           <div className="mt-2.5 flex flex-wrap items-center gap-3.5">
             {/* Initials Avatar */}
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-accent to-blue-400 text-white font-bold text-base shadow-md shadow-accent/20">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-accent to-accent-light text-white font-bold text-base shadow-md shadow-accent/20">
               {initials}
             </div>
             <div>

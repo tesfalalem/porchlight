@@ -169,7 +169,7 @@ export function ApartmentFormModal({
             <select {...register('availabilityStatus')} className="mt-1 w-full rounded-lg border px-3 py-2">
               <option value="Available">Available Now</option>
               <option value="Upcoming">Upcoming (set date below)</option>
-              <option value="Occupied">Currently Unavailable</option>
+              <option value="Occupied">Currently Occupied</option>
             </select>
           </label>
         </div>

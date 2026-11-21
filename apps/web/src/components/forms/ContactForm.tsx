@@ -71,7 +71,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={mutation.isPending}
-        className="rounded-xl bg-accent px-6 py-3 text-sm font-bold text-white shadow-sm shadow-blue-500/25 transition hover:bg-accent-hover disabled:opacity-60"
+        className="rounded-xl bg-accent px-6 py-3 text-sm font-bold text-white shadow-sm shadow-accent/25 transition hover:bg-accent-hover disabled:opacity-60"
       >
         {mutation.isPending ? 'Sending…' : 'Send message'}
       </button>

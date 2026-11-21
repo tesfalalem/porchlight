@@ -5,8 +5,8 @@ import { Building2, MapPin, Phone, Mail } from 'lucide-react';
 export function Footer() {
   return (
     <footer className="bg-navy-950 text-slate-300">
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 sm:gap-10">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:px-8">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 sm:gap-8">
 
           {/* Brand */}
           <div>
@@ -19,15 +19,15 @@ export function Footer() {
                 <p className="text-[10px] uppercase tracking-widest text-slate-400 sm:text-xs">Bole, Addis Ababa</p>
               </div>
             </div>
-            <p className="mt-3 text-xs leading-relaxed text-slate-400 sm:mt-4 sm:text-sm">{COMPANY.tagline}</p>
+            <p className="mt-2 text-xs leading-relaxed text-slate-400 sm:mt-3 sm:text-sm">{COMPANY.tagline}</p>
           </div>
 
           {/* Quick Links & Support: 2 columns on mobile, direct columns on sm+ */}
-          <div className="grid grid-cols-2 gap-6 sm:contents">
+          <div className="grid grid-cols-2 gap-4 sm:contents">
             {/* Navigation */}
             <div>
-              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-accent sm:mb-4">Quick Links</p>
-              <ul className="space-y-2 text-xs sm:space-y-2.5 sm:text-sm">
+              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-accent sm:mb-3">Quick Links</p>
+              <ul className="space-y-1.5 text-xs sm:space-y-2 sm:text-sm">
                 {[
                   { to: '/', label: 'Home' },
                   { to: '/apartments', label: 'Apartments' },
@@ -42,8 +42,8 @@ export function Footer() {
 
             {/* Support */}
             <div>
-              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-accent sm:mb-4">Support</p>
-              <ul className="space-y-2 text-xs sm:space-y-2.5 sm:text-sm">
+              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-accent sm:mb-3">Support</p>
+              <ul className="space-y-1.5 text-xs sm:space-y-2 sm:text-sm">
                 <li><Link to="/contact" className="inline-block py-0.5 text-slate-300 transition-colors hover:text-white">Contact</Link></li>
                 <li><Link to="/privacy" className="inline-block py-0.5 text-slate-300 transition-colors hover:text-white">Privacy Policy</Link></li>
                 <li><Link to="/terms" className="inline-block py-0.5 text-slate-300 transition-colors hover:text-white">Terms of Service</Link></li>
@@ -53,8 +53,8 @@ export function Footer() {
 
           {/* Contact + Social Icons */}
           <div>
-            <p className="mb-3 text-xs font-bold uppercase tracking-widest text-accent sm:mb-4">Contact Info</p>
-            <ul className="space-y-2.5 text-xs sm:space-y-3 sm:text-sm">
+            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-accent sm:mb-3">Contact Info</p>
+            <ul className="space-y-1.5 text-xs sm:space-y-2 sm:text-sm">
               <li className="flex items-start gap-2.5">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
                 <span className="text-slate-400">{COMPANY.address}</span>
@@ -71,7 +71,7 @@ export function Footer() {
             </ul>
 
             {/* Social icons */}
-            <div className="mt-4 flex flex-wrap gap-2 sm:mt-5">
+            <div className="mt-3 flex flex-wrap gap-2 sm:mt-4">
               {/* Facebook */}
               <a href={COMPANY.social.facebook} target="_blank" rel="noreferrer" aria-label="Facebook"
                 className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1877F2] text-white transition hover:-translate-y-0.5 hover:shadow-lg sm:h-9 sm:w-9">
@@ -106,7 +106,7 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-white/10 py-4 text-center text-xs text-slate-400 sm:py-5">
+      <div className="border-t border-white/10 py-3 text-center text-xs text-slate-400 sm:py-4">
         <p className="mx-auto max-w-7xl px-4">
           © {new Date().getFullYear()} {COMPANY.name}. All rights reserved.
         </p>

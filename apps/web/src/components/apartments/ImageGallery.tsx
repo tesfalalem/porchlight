@@ -156,6 +156,7 @@ export function ImageGallery({ images, apartmentName }: ImageGalleryProps) {
             <img
               src={sorted[1].url}
               alt={sorted[1].alt ?? 'Residence view'}
+              loading="lazy"
               className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-navy-950/0 transition-colors duration-300 group-hover:bg-navy-950/15" />
@@ -169,6 +170,7 @@ export function ImageGallery({ images, apartmentName }: ImageGalleryProps) {
             <img
               src={sorted[2].url}
               alt={sorted[2].alt ?? 'Residence view'}
+              loading="lazy"
               className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-navy-950/0 transition-colors duration-300 group-hover:bg-navy-950/15" />
@@ -182,6 +184,7 @@ export function ImageGallery({ images, apartmentName }: ImageGalleryProps) {
             <img
               src={sorted[3]?.url ?? sorted[0].url}
               alt={sorted[3]?.alt ?? 'Residence view'}
+              loading="lazy"
               className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-navy-950/0 transition-colors duration-300 group-hover:bg-navy-950/15" />
@@ -195,6 +198,7 @@ export function ImageGallery({ images, apartmentName }: ImageGalleryProps) {
             <img
               src={sorted[4]?.url ?? sorted[1]?.url ?? sorted[0].url}
               alt={sorted[4]?.alt ?? 'Residence view'}
+              loading="lazy"
               className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-navy-950/0 transition-colors duration-300 group-hover:bg-navy-950/15" />
@@ -228,7 +232,6 @@ export function ImageGallery({ images, apartmentName }: ImageGalleryProps) {
           />
 
           <img
-            key={current.url}
             src={current.url}
             alt={current.alt ?? 'Apartment photography'}
             className="relative z-10 h-full w-full object-contain sm:object-cover transition-transform duration-700 ease-out group-hover:scale-102"
@@ -340,7 +343,7 @@ export function ImageGallery({ images, apartmentName }: ImageGalleryProps) {
                 )}
                 aria-label={`Select photograph ${i + 1}`}
               >
-                <img src={img.url} alt="" className="h-full w-full object-cover" />
+                <img src={img.url} alt="" loading="lazy" className="h-full w-full object-cover" />
               </button>
             ))}
           </div>
@@ -422,7 +425,7 @@ export function ImageGallery({ images, apartmentName }: ImageGalleryProps) {
                         : 'border-transparent opacity-50 hover:opacity-90',
                     )}
                   >
-                    <img src={img.url} alt="" className="h-full w-full object-cover" />
+                    <img src={img.url} alt="" loading="lazy" className="h-full w-full object-cover" />
                   </button>
                 ))}
               </div>

@@ -3,52 +3,51 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, MapPin, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AmenityCard } from '../../components/apartments/AmenityCard';
+import { ApartmentGrid } from '../../components/apartments/ApartmentGrid';
+import { EmptyState } from '../../components/common/EmptyState';
 import { ErrorState } from '../../components/common/ErrorState';
 import { LoadingState } from '../../components/common/LoadingState';
+import { BUILDING_AMENITIES } from '../../data/buildingAmenities';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
-import { fetchAmenities } from '../../services/amenitiesApi';
+import { fetchApartments } from '../../services/apartmentsApi';
 
 const HERO_IMAGE = '/building.jpg';
 
 export function HomePage() {
   useDocumentTitle('Modern furnished apartments in Bole, Addis Ababa');
 
-  const amenitiesQuery = useQuery({
-    queryKey: ['amenities'],
-    queryFn: fetchAmenities,
+  const apartmentsQuery = useQuery({
+    queryKey: ['apartments'],
+    queryFn: () => fetchApartments(),
   });
 
-  const keyAmenities = (amenitiesQuery.data ?? []).slice(0, 6);
+  const featuredApartments = (apartmentsQuery.data ?? []).slice(0, 3);
 
   return (
     <div>
       {/* ── HERO: CINEMATIC FULL-WIDTH CENTERED LAYOUT ── */}
       <section className="relative min-h-[calc(100vh-72px)] sm:min-h-[calc(100vh-88px)] flex items-center justify-center overflow-hidden bg-navy-950 text-white">
-        {/* Full-bleed background image (bright and visible) */}
+        {/* Full-bleed background image */}
         <div className="absolute inset-0 z-0">
           <img
             src={HERO_IMAGE}
             alt="Porchlight Luxury Furnished Apartments in Bole"
+            fetchPriority="high"
+            width={1920}
+            height={1080}
             className="h-full w-full object-cover object-center"
           />
-          {/* Light neutral overlay matching inspiration: lets the natural daylight and warm colors shine through while keeping text crisp */}
-          <div className="absolute inset-0 bg-black/25" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/25" />
+          <div className="absolute inset-0 bg-black/5" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
         </div>
 
         {/* Centered Content Container */}
         <div className="relative z-10 mx-auto max-w-5xl px-4 py-20 text-center sm:px-6 sm:py-28 lg:px-8 lg:py-32">
-          {/* Location Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-navy-950/60 px-4 py-1.5 shadow-xl backdrop-blur-md">
-            <MapPin className="h-3.5 w-3.5 text-accent" />
-            <span className="text-xs font-bold uppercase tracking-wider text-white">
-              Bole, Addis Ababa · 24 Furnished Units
-            </span>
-          </div>
 
-          {/* Main Hero Headline */}
-          <h1 className="mt-6 font-display text-4xl font-black leading-[1.15] tracking-tight text-white drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)] sm:text-6xl md:text-7xl">
-            Find Your Next Home in Bole, Addis Ababa
+          <h1 className="mt-6 font-display text-4xl font-black leading-[1.15] tracking-tight text-navy-950 sm:text-6xl md:text-7xl">
+            <span className="bg-white/75 backdrop-blur-sm px-4 py-2 box-decoration-clone leading-[1.35]">
+              Find Your Next Home in Bole, Addis Ababa
+            </span>
           </h1>
 
           {/* Centered Action Buttons */}
@@ -83,97 +82,53 @@ export function HomePage() {
             </h2>
             <div className="mx-auto mt-2.5 h-1 w-12 rounded-full bg-accent" />
             <p className="mx-auto mt-3 max-w-lg text-sm text-slate-500 sm:text-base">
-              Choose the apartment type that fits your needs.
+              Choose the apartment that fits your needs.
             </p>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2">
-            {/* 2 Bedroom Card */}
-            <Link
-              to="/apartments/2-bedroom"
-              className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-navy-900/20"
-            >
-              <div className="aspect-[16/9] overflow-hidden bg-slate-100">
-                <img
-                  src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80"
-                  alt="2 Bedroom Apartment"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 via-transparent to-transparent" />
-              </div>
-              <div className="p-5 sm:p-6">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-accent">2 Bedroom</p>
-                    <h3 className="mt-1 font-display text-xl font-bold text-navy-950 sm:text-2xl">
-                      2 Bedroom Apartment
-                    </h3>
-                    <p className="mt-2 text-sm text-slate-500">Comfortable & modern — ideal for couples or small families.</p>
+          {apartmentsQuery.isLoading ? <LoadingState label="Loading apartments…" /> : null}
+          {apartmentsQuery.isError ? (
+            <ErrorState onRetry={() => void apartmentsQuery.refetch()} />
+          ) : null}
+          {!apartmentsQuery.isLoading && !apartmentsQuery.isError && (
+            <>
+              {featuredApartments.length === 0 ? (
+                <EmptyState message="No apartments available at this time." />
+              ) : (
+                <>
+                  <ApartmentGrid apartments={featuredApartments} />
+                  <div className="mt-10 flex justify-center">
+                    <Link
+                      to="/apartments"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-8 py-3.5 text-sm font-bold text-white shadow-md shadow-accent/25 transition-all duration-200 hover:bg-accent-hover hover:scale-105 active:scale-95"
+                    >
+                      <span>See All Apartments</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
                   </div>
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy-900/8 text-navy-900 transition group-hover:bg-navy-900 group-hover:text-white">
-                    <ArrowRight className="h-5 w-5" />
-                  </div>
-                </div>
-                <div className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-accent py-2.5 text-sm font-bold text-white shadow-sm shadow-blue-500/20 transition group-hover:bg-accent-hover">
-                  View Apartments
-                </div>
-              </div>
-            </Link>
-
-            {/* 3 Bedroom Card */}
-            <Link
-              to="/apartments/3-bedroom"
-              className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-navy-900/20"
-            >
-              <div className="aspect-[16/9] overflow-hidden bg-slate-100">
-                <img
-                  src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80"
-                  alt="3 Bedroom Apartment"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 via-transparent to-transparent" />
-              </div>
-              <div className="p-5 sm:p-6">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-accent">3 Bedroom</p>
-                    <h3 className="mt-1 font-display text-xl font-bold text-navy-950 sm:text-2xl">
-                      3 Bedroom Apartment
-                    </h3>
-                    <p className="mt-2 text-sm text-slate-500">Spacious family home — room to live, work, and grow.</p>
-                  </div>
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy-900/8 text-navy-900 transition group-hover:bg-navy-900 group-hover:text-white">
-                    <ArrowRight className="h-5 w-5" />
-                  </div>
-                </div>
-                <div className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-accent py-2.5 text-sm font-bold text-white shadow-sm shadow-blue-500/20 transition group-hover:bg-accent-hover">
-                  View Apartments
-                </div>
-              </div>
-            </Link>
-          </div>
+                </>
+              )}
+            </>
+          )}
         </div>
       </section>
 
-      {/* ── FACILITIES ── */}
+      {/* ── BUILDING AMENITIES ── */}
       <section className="bg-white py-10 sm:py-24">
         <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
           <div className="mb-8 text-center sm:mb-12">
-            <p className="text-xs font-bold uppercase tracking-widest text-accent">Building Amenities</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-accent">BUILDING AMENITIES</p>
             <h2 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-navy-950 sm:text-5xl">
               Everything You Need
             </h2>
             <div className="mx-auto mt-2.5 h-1 w-12 rounded-full bg-accent" />
           </div>
-          {amenitiesQuery.isLoading ? <LoadingState label="Loading…" /> : null}
-          {amenitiesQuery.isError ? <ErrorState onRetry={() => void amenitiesQuery.refetch()} /> : null}
-          {keyAmenities.length ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
-              {keyAmenities.map((a) => <AmenityCard key={a.id} amenity={a} />)}
-            </div>
-          ) : null}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
+            {BUILDING_AMENITIES.map((a) => (
+              <AmenityCard key={a.id} amenity={a} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -198,7 +153,7 @@ export function HomePage() {
               </ul>
               <Link
                 to="/contact"
-                className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-xs font-bold text-white shadow-sm shadow-blue-500/20 transition hover:bg-accent-hover sm:mt-6 sm:py-3.5 sm:text-sm"
+                className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3 text-xs font-bold text-white shadow-sm shadow-accent/20 transition hover:bg-accent-hover sm:mt-6 sm:py-3.5 sm:text-sm"
               >
                 Get Directions & Contact <ArrowRight className="h-4 w-4" />
               </Link>

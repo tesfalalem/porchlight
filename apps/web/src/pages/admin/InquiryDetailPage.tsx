@@ -199,7 +199,7 @@ export function InquiryDetailPage() {
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-accent to-blue-400 font-bold text-white text-sm shadow">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-accent to-accent-light font-bold text-white text-sm shadow">
                   {customerInitials}
                 </div>
                 <div>

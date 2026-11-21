@@ -5,34 +5,40 @@
 @layer base {
   :root,
   .admin-theme {
-    /* Modern Sapphire & Ice Palette */
-    --color-navy-950: 11 19 43; /* #0B132B (Deep Midnight Sapphire) */
-    --color-navy-900: 15 23 42; /* #0F172A (Rich Space Navy) */
-    --color-navy-800: 30 41 59; /* #1E293B */
-    --color-navy-700: 51 65 85; /* #334155 */
+    /* ── Porchlight Official Brand Palette ── */
 
-    --color-accent: 37 99 235; /* #2563EB (Electric Sapphire Blue) */
-    --color-accent-hover: 29 78 216; /* #1D4ED8 (Deep Cobalt) */
-    --color-accent-light: 96 165 250; /* #60A5FA (Sky Sapphire) */
-    --color-accent-soft: 239 246 255; /* #EFF6FF (10% Sapphire tint) */
+    /* Charcoal scale — replaces navy */
+    --color-navy-950: 30 20 24;    /* #1E1418  near-black with warm tint */
+    --color-navy-900: 44 30 36;    /* #2C1E24  deep charcoal-burgundy     */
+    --color-navy-800: 68 50 58;    /* #44323A  mid charcoal               */
+    --color-navy-700: 88 89 91;    /* #58595B  Secondary Charcoal Gray     */
 
-    --color-cream: 255 255 255; /* #FFFFFF Pure Crisp White */
-    --color-cream-dark: 248 250 252; /* #F8FAFC Ice White */
+    /* Burgundy accent — brightened for visibility */
+    --color-accent:       192 0 90;    /* #C0005A  Bright Vivid Burgundy    */
+    --color-accent-hover: 162 0 74;    /* #A2004A  Deeper hover             */
+    --color-accent-light: 220 72 136;  /* #DC4888  Lighter pink-burgundy    */
+    --color-accent-soft:  254 236 245; /* #FEECF5  Soft tinted background   */
 
-    --color-sage: 56 189 248; /* #38BDF8 Sky Cyan */
-    --color-sage-dark: 2 132 199; /* #0284C7 */
+    /* Cream / white surfaces */
+    --color-cream:      250 250 250; /* #FAFAFA Background Off-White       */
+    --color-cream-dark: 243 243 243; /* #F3F3F3 Slightly deeper off-white  */
 
-    --color-slate-50: 248 250 252; /* #F8FAFC (Ice Canvas) */
-    --color-slate-100: 241 245 249; /* #F1F5F9 (Soft Frost) */
-    --color-slate-200: 226 232 240; /* #E2E8F0 (Ice Border) */
-    --color-slate-300: 203 213 225; /* #CBD5E1 */
-    --color-slate-400: 148 163 184; /* #94A3B8 (Cool Muted Gray) */
-    --color-slate-500: 100 116 139; /* #64748B (Secondary body copy) */
-    --color-slate-600: 71 85 105; /* #475569 */
-    --color-slate-700: 51 65 85; /* #334155 (Primary readable body copy) */
-    --color-slate-800: 30 41 59; /* #1E293B */
-    --color-slate-900: 15 23 42; /* #0F172A (Headings) */
-    --color-slate-950: 2 6 23; /* #020617 */
+    /* Sage — warm rose tint for active/highlight states */
+    --color-sage:      218 112 150; /* #DA7096 Rose highlight              */
+    --color-sage-dark: 150 0 72;    /* #960048 Burgundy (deep sage)        */
+
+    /* Neutral grays — kept as standard readable grays */
+    --color-slate-50:  250 250 250; /* #FAFAFA */
+    --color-slate-100: 245 244 244; /* #F5F4F4 */
+    --color-slate-200: 229 227 227; /* #E5E3E3 */
+    --color-slate-300: 207 205 205; /* #CFCDCD */
+    --color-slate-400: 158 156 156; /* #9E9C9C */
+    --color-slate-500: 120 118 118; /* #787676 */
+    --color-slate-600: 100 98 98;   /* #646262 */
+    --color-slate-700: 88 89 91;    /* #58595B Secondary Charcoal Gray     */
+    --color-slate-800: 60 58 58;    /* #3C3A3A */
+    --color-slate-900: 38 36 36;    /* #262424 */
+    --color-slate-950: 20 18 18;    /* #141212 */
   }
 
   html {
@@ -40,7 +46,7 @@
   }
 
   body {
-    @apply bg-white text-slate-700 antialiased font-sans;
+    @apply bg-cream text-slate-700 antialiased font-sans;
     min-height: 100vh;
   }
 
@@ -55,7 +61,7 @@
   }
 
   ::selection {
-    background: #2563eb;
+    background: #C0005A;
     color: #ffffff;
   }
 
@@ -64,10 +70,10 @@
     height: 8px;
   }
   ::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: #f5f4f4;
   }
   ::-webkit-scrollbar-thumb {
-    background: #94a3b8;
+    background: #C0005A;
     border-radius: 9999px;
   }
 }
@@ -90,7 +96,7 @@
   }
 
   .btn-solid {
-    @apply inline-flex items-center justify-center rounded-xl bg-accent px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm shadow-blue-500/20 transition hover:bg-accent-hover sm:px-6 sm:text-xs;
+    @apply inline-flex items-center justify-center rounded-xl bg-accent px-5 py-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-white shadow-sm shadow-accent/20 transition hover:bg-accent-hover sm:px-6 sm:text-xs;
   }
 
   .btn-dark {
@@ -145,18 +151,19 @@
     to   { transform: scale(1.08); }
   }
 
+  /* Editorial panel — burgundy radial tints */
   .editorial-panel {
-    background-color: #0b132b;
-    background-image: radial-gradient(ellipse at 12% 20%, rgba(56, 189, 248, 0.12), transparent 50%),
-      radial-gradient(ellipse at 90% 80%, rgba(37, 99, 235, 0.18), transparent 45%);
+    background-color: #1e1418;
+    background-image: radial-gradient(ellipse at 12% 20%, rgba(192, 0, 90, 0.18), transparent 50%),
+      radial-gradient(ellipse at 90% 80%, rgba(220, 72, 136, 0.14), transparent 45%);
   }
 
   .shimmer-bg {
     background: linear-gradient(
       90deg,
-      #f1f5f9 0%,
-      #e2e8f0 50%,
-      #f1f5f9 100%
+      #f5f4f4 0%,
+      #e5e3e3 50%,
+      #f5f4f4 100%
     );
     background-size: 200% 100%;
     animation: shimmer 1.8s infinite;
