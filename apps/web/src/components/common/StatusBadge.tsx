@@ -4,18 +4,30 @@ import { formatDate } from '../../utils/format';
 
 type BadgeStatus = AvailabilityStatus | InquiryStatus | string;
 
-const styles: Record<string, { bg: string; dot: string }> = {
-  Available:    { bg: 'bg-white text-emerald-700 border-emerald-400 shadow-md', dot: 'bg-emerald-500' },
-  Occupied:     { bg: 'bg-white text-slate-700 border-slate-400 shadow-md', dot: 'bg-slate-500' },
-  Upcoming:     { bg: 'bg-white text-amber-700 border-amber-400 shadow-md', dot: 'bg-amber-500' },
-  'Coming Soon':{ bg: 'bg-white text-amber-700 border-amber-400 shadow-md', dot: 'bg-amber-500' },
-  Unavailable:  { bg: 'bg-white text-rose-700 border-rose-400 shadow-md', dot: 'bg-rose-500' },
-  New:          { bg: 'bg-accent/10 text-accent border-accent/30 backdrop-blur-md', dot: 'bg-accent' },
-  Contacted:    { bg: 'bg-violet-500/10 text-violet-800 border-violet-200/60 backdrop-blur-md', dot: 'bg-violet-500' },
-  'In Progress':{ bg: 'bg-amber-500/10 text-amber-900 border-amber-200/60 backdrop-blur-md', dot: 'bg-amber-500' },
-  Resolved:     { bg: 'bg-emerald-500/10 text-emerald-800 border-emerald-200/60 backdrop-blur-md', dot: 'bg-emerald-500' },
-  Closed:       { bg: 'bg-slate-500/10 text-slate-600 border-slate-200/60 backdrop-blur-md', dot: 'bg-slate-400' },
+interface StyleConfig { text: string; dot: string }
+
+const styles: Record<string, StyleConfig> = {
+  Available:     { text: 'text-[#27866A]',  dot: 'bg-[#27866A]' },
+  Occupied:      { text: 'text-slate-500',   dot: 'bg-slate-400' },
+  Upcoming:      { text: 'text-amber-700',   dot: 'bg-amber-500' },
+  'Coming Soon': { text: 'text-amber-700',   dot: 'bg-amber-500' },
+  Unavailable:   { text: 'text-red-600',     dot: 'bg-red-500'   },
+  New:           { text: 'text-accent',       dot: 'bg-accent'    },
+  Contacted:     { text: 'text-purple-700',  dot: 'bg-purple-500' },
+  'In Progress': { text: 'text-amber-700',   dot: 'bg-amber-500' },
+  Resolved:      { text: 'text-[#27866A]',   dot: 'bg-[#27866A]' },
+  Closed:        { text: 'text-slate-400',   dot: 'bg-slate-300' },
 };
+
+function getLabel(status: BadgeStatus, availableFrom?: string | null): string {
+  if (status === 'Available' && !availableFrom) return 'Available Now';
+  if (status === 'Available' && availableFrom) return `Available on ${formatDate(availableFrom)}`;
+  if ((status === 'Upcoming' || status === 'Coming Soon') && availableFrom)
+    return `Available from ${formatDate(availableFrom)}`;
+  if (status === 'Upcoming' || status === 'Coming Soon') return 'Available Soon';
+  if (status === 'Occupied') return 'Currently Occupied';
+  return status as string;
+}
 
 export function StatusBadge({
   status,
@@ -24,31 +36,16 @@ export function StatusBadge({
   status: BadgeStatus;
   availableFrom?: string | null;
 }) {
-  // Derive human-readable label
-  let label: string;
-  if (status === 'Available' && !availableFrom) {
-    label = 'Available Now';
-  } else if (status === 'Available' && availableFrom) {
-    label = `Available on ${formatDate(availableFrom)}`;
-  } else if ((status === 'Upcoming' || status === 'Coming Soon') && availableFrom) {
-    label = `Available from ${formatDate(availableFrom)}`;
-  } else if (status === 'Upcoming' || status === 'Coming Soon') {
-    label = 'Available Soon';
-  } else if (status === 'Occupied') {
-    label = 'Currently Occupied';
-  } else {
-    label = status;
-  }
-  const config = styles[status] ?? { bg: 'bg-slate-100 text-slate-700 border-slate-200', dot: 'bg-slate-400' };
+  const label = getLabel(status, availableFrom);
+  const cfg = styles[status as string] ?? { text: 'text-slate-500', dot: 'bg-slate-400' };
 
   return (
     <span
-      className={clsx(
-        'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold shadow-sm transition-all',
-        config.bg,
-      )}
+      className={clsx('inline-flex items-center gap-1.5 text-[12px] font-medium', cfg.text)}
+      role="status"
+      aria-label={label}
     >
-      <span className={clsx('h-1.5 w-1.5 rounded-full animate-pulse-subtle', config.dot)} />
+      <span className={clsx('h-1.5 w-1.5 shrink-0 rounded-full', cfg.dot)} aria-hidden />
       {label}
     </span>
   );

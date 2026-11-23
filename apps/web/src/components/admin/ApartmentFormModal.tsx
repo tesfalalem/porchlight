@@ -8,6 +8,7 @@ import { Modal } from '../common/Modal';
 
 const schema = z.object({
   number: z.string().min(1),
+  name: z.string().optional(),
   description: z.string().min(1),
   location: z.string().min(1),
   floor: z.coerce.number().optional().nullable(),
@@ -51,6 +52,7 @@ export function ApartmentFormModal({
     values: initial
       ? {
           number: initial.number,
+          name: initial.name,
           description: initial.description,
           location: initial.location,
           floor: initial.floor,
@@ -64,6 +66,7 @@ export function ApartmentFormModal({
         }
       : {
           number: '',
+          name: '',
           description: '',
           location: 'Bole, Addis Ababa',
           floor: null,
@@ -115,7 +118,7 @@ export function ApartmentFormModal({
       .filter(Boolean);
     onSubmit({
       ...values,
-      name: initial?.name ?? `Unit ${values.number}`,
+      name: values.name?.trim() || initial?.name || `Unit ${values.number}`,
       type: initial?.type ?? 'Apartment',
       bathrooms: initial?.bathrooms ?? 1,
       floor: values.floor ?? null,
@@ -134,9 +137,13 @@ export function ApartmentFormModal({
     <Modal open={open} title={initial ? 'Edit apartment' : 'Add apartment'} onClose={onClose}>
       <form onSubmit={handleSubmit(submit)} className="space-y-3 text-sm">
         <div className="grid gap-3 sm:grid-cols-2">
-          <label className="block sm:col-span-2">
-            Number
+          <label className="block">
+            Unit Number
             <input {...register('number')} className="mt-1 w-full rounded-lg border px-3 py-2" />
+          </label>
+          <label className="block">
+            Unit Name
+            <input {...register('name')} placeholder="e.g. Unit A-101" className="mt-1 w-full rounded-lg border px-3 py-2" />
           </label>
         </div>
         <label className="block">

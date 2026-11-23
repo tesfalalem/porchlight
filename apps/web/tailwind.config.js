@@ -51,8 +51,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['"Source Sans 3"', 'system-ui', 'sans-serif'],
-        display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        sans:    ['Montserrat', 'system-ui', 'sans-serif'],
+        display: ['Montserrat', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {
         brand: '0.22em',

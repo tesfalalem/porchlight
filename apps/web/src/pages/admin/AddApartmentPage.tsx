@@ -61,6 +61,7 @@ export function AddApartmentPage() {
 
   // Form State
   const [number, setNumber] = useState('');
+  const [name, setName] = useState('');
   const [type, setType] = useState('');
   const [location, setLocation] = useState('Bole, Addis Ababa');
   const [floor, setFloor] = useState('2');
@@ -89,6 +90,9 @@ export function AddApartmentPage() {
   // Handle unit number change
   const handleNumberChange = (val: string) => {
     setNumber(val);
+    if (!name || name.startsWith('Unit ')) {
+      setName(val.trim() ? `Unit ${val.trim()}` : '');
+    }
   };
 
   // Image actions
@@ -162,7 +166,7 @@ export function AddApartmentPage() {
         throw new Error('Please select the number of bathrooms (2 or 3 Bathrooms)');
       }
 
-      const finalName = 'Porchlight Residence';
+      const finalName = name.trim() || `Unit ${number.trim()}`;
 
       return createApartment({
         name: finalName,
@@ -205,6 +209,12 @@ export function AddApartmentPage() {
 
     if (!number.trim()) {
       setError('Please enter a Unit Number (e.g. A-101 or B-204).');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (!name.trim()) {
+      setError('Please enter a Unit Name (e.g. Unit A-101).');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -328,12 +338,16 @@ export function AddApartmentPage() {
 
                 <label className="block">
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-700">
-                    Public Residence Name
+                    Unit Name <span className="text-red-500">*</span>
                   </span>
-                  <div className="mt-1.5 flex w-full items-center rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-navy-950">
-                    Porchlight Residence
-                    <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-slate-400">Fixed</span>
-                  </div>
+                  <input
+                    required
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. Unit A-101"
+                    className="mt-1.5 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-navy-950 transition focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/15"
+                  />
                 </label>
               </div>
 

@@ -76,7 +76,7 @@ export function AdminApartmentDetailPage() {
   const [quickStatus, setQuickStatus] = useState('');
   const [quickAvailableFrom, setQuickAvailableFrom] = useState('');
 
-  useDocumentTitle(apt ? `${apt.name} (Unit ${apt.number}) — Admin` : 'Apartment Details');
+  useDocumentTitle(apt ? `${apt.name} — Admin` : 'Apartment Details');
 
   // Sync quick status when apt loads
   const currentStatus = quickStatus || (apt?.availabilityStatus ?? 'Available');
@@ -513,7 +513,7 @@ export function AdminApartmentDetailPage() {
             <div>
               <h3 className="text-lg font-bold text-navy-900">Delete this apartment permanently?</h3>
               <p className="mt-1 text-sm text-slate-500">
-                Are you sure you want to delete <strong>{apt.name} (Unit {apt.number})</strong>? All data and photos will be removed permanently.
+                Are you sure you want to delete <strong>{apt.name}</strong>? All data and photos will be removed permanently.
               </p>
             </div>
             <div className="flex gap-3 pt-2">
@@ -579,12 +579,13 @@ export function AdminApartmentDetailPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Display Name</label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Unit Name *</label>
                   <input
+                    required
                     value={editForm.name}
                     onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
                     className={inputCls}
-                    placeholder={`Unit ${editForm.number}`}
+                    placeholder="e.g. Unit A-101"
                   />
                 </div>
               </div>

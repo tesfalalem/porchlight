@@ -12,15 +12,16 @@ export function LoadingState({ label = 'Loading…' }: { label?: string }) {
 
 export function SkeletonCard() {
   return (
-    <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm">
-      <div className="aspect-[4/3] shimmer-bg" />
-      <div className="space-y-3.5 p-5">
-        <div className="h-5 w-2/3 rounded-lg shimmer-bg" />
-        <div className="h-3.5 w-1/3 rounded-lg shimmer-bg" />
-        <div className="h-4 w-full rounded-lg shimmer-bg" />
-        <div className="pt-2">
-          <div className="h-10 w-full rounded-2xl shimmer-bg" />
+    <div className="overflow-hidden rounded-xl border border-[#E9E5E0] bg-white shadow-sm">
+      <div className="aspect-[16/10] shimmer-bg" />
+      <div className="space-y-2 p-2.5 sm:p-3">
+        <div className="flex items-center justify-between">
+          <div className="h-4 w-1/2 rounded shimmer-bg" />
+          <div className="h-3 w-1/4 rounded shimmer-bg" />
         </div>
+        <div className="h-3.5 w-3/4 rounded shimmer-bg" />
+        <div className="h-3 w-full rounded shimmer-bg pt-1" />
+        <div className="h-6 w-full rounded shimmer-bg mt-1" />
       </div>
     </div>
   );

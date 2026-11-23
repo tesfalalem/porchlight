@@ -4,10 +4,9 @@ import {
   ArrowLeft,
   Bath,
   BedDouble,
-  Building2,
   Check,
+  ChevronLeft,
   ChevronRight,
-  ExternalLink,
   Heart,
   Home,
   MapPin,
@@ -16,12 +15,11 @@ import {
   Phone,
   Play,
   Share2,
-  Sparkles,
+  X,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { getAmenityIcon } from '../../utils/amenityIcons';
-import { ImageGallery } from '../../components/apartments/ImageGallery';
 import { ApartmentCard } from '../../components/apartments/ApartmentCard';
 import { InquiryForm } from '../../components/forms/InquiryForm';
 import { ErrorState } from '../../components/common/ErrorState';
@@ -31,14 +29,273 @@ import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { formatPrice } from '../../utils/format';
 import { fetchApartment, fetchApartments } from '../../services/apartmentsApi';
 
+// ── Minimal inline gallery (mobile-first, full-width) ────────────────────────
+function Gallery({ images, name }: { images: { url: string; alt?: string | null; isPrimary?: boolean; sortOrder?: number }[]; name?: string }) {
+  const sorted = useMemo(
+    () => [...images].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)),
+    [images],
+  );
+  const [idx, setIdx] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
+  const [lbIdx, setLbIdx] = useState(0);
+  const touchX = useRef<number | null>(null);
+
+  const prev = () => setIdx((i) => (i === 0 ? sorted.length - 1 : i - 1));
+  const next = () => setIdx((i) => (i === sorted.length - 1 ? 0 : i + 1));
+
+  // Keyboard nav for lightbox
+  useEffect(() => {
+    if (!lightbox) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') setLbIdx((i) => (i === sorted.length - 1 ? 0 : i + 1));
+      if (e.key === 'ArrowLeft') setLbIdx((i) => (i === 0 ? sorted.length - 1 : i - 1));
+      if (e.key === 'Escape') setLightbox(false);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [lightbox, sorted.length]);
+
+  if (!sorted.length) return (
+    <div className="flex aspect-[4/3] w-full items-center justify-center bg-[#F3F0EC]">
+      <span className="text-sm text-slate-400">No photographs available</span>
+    </div>
+  );
+
+  const current = sorted[idx];
+
+  return (
+    <>
+      {/* Main viewer */}
+      <div
+        className="relative w-full overflow-hidden bg-[#1A1214]"
+        onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
+        onTouchEnd={(e) => {
+          if (touchX.current === null) return;
+          const dx = e.changedTouches[0].clientX - touchX.current;
+          if (dx < -40) next();
+          else if (dx > 40) prev();
+          touchX.current = null;
+        }}
+      >
+        <div className="aspect-[4/3] sm:aspect-[16/9]">
+          <img
+            key={idx}
+            src={current.url}
+            alt={current.alt ?? name ?? 'Residence photograph'}
+            className="h-full w-full object-cover"
+          />
+        </div>
+
+        {/* Counter */}
+        <div className="absolute bottom-3 left-3 rounded bg-black/50 px-2 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
+          {idx + 1} / {sorted.length}
+        </div>
+
+        {/* Fullscreen */}
+        <button
+          type="button"
+          onClick={() => { setLbIdx(idx); setLightbox(true); }}
+          className="absolute bottom-3 right-3 rounded bg-black/50 px-2.5 py-1.5 text-[11px] font-medium text-white backdrop-blur-sm transition hover:bg-black/70"
+          aria-label="Open fullscreen gallery"
+        >
+          View all {sorted.length} photos
+        </button>
+
+        {/* Prev/Next — only when multiple images */}
+        {sorted.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={prev}
+              className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60"
+              aria-label="Previous photo"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={next}
+              className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition hover:bg-black/60"
+              aria-label="Next photo"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Thumbnails */}
+      {sorted.length > 1 && (
+        <div className="flex gap-1.5 overflow-x-auto bg-[#1A1214] px-1 pb-1 no-scrollbar">
+          {sorted.map((img, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setIdx(i)}
+              className={`h-14 w-20 shrink-0 overflow-hidden rounded transition ${
+                i === idx ? 'ring-2 ring-accent ring-offset-1 ring-offset-[#1A1214]' : 'opacity-50 hover:opacity-80'
+              }`}
+              aria-label={`Photo ${i + 1}`}
+            >
+              <img src={img.url} alt="" className="h-full w-full object-cover" loading="lazy" />
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div className="fixed inset-0 z-[60] flex flex-col bg-black/95 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Fullscreen gallery">
+          <div className="flex h-12 shrink-0 items-center justify-between px-4">
+            <span className="text-[13px] font-medium text-white/60">
+              {lbIdx + 1} / {sorted.length}
+            </span>
+            <button
+              type="button"
+              onClick={() => setLightbox(false)}
+              className="flex h-8 w-8 items-center justify-center rounded text-white/60 hover:text-white"
+              aria-label="Close gallery"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="relative flex flex-1 items-center justify-center px-4">
+            <img
+              src={sorted[lbIdx].url}
+              alt={sorted[lbIdx].alt ?? ''}
+              className="max-h-full max-w-full object-contain"
+            />
+            {sorted.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setLbIdx((i) => (i === 0 ? sorted.length - 1 : i - 1))}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+                  aria-label="Previous photo"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLbIdx((i) => (i === sorted.length - 1 ? 0 : i + 1))}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+                  aria-label="Next photo"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Thumbnails strip */}
+          <div className="flex h-16 shrink-0 items-center gap-1.5 overflow-x-auto px-4 no-scrollbar">
+            {sorted.map((img, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setLbIdx(i)}
+                className={`h-11 w-16 shrink-0 overflow-hidden rounded transition ${
+                  i === lbIdx ? 'ring-2 ring-accent' : 'opacity-40 hover:opacity-70'
+                }`}
+              >
+                <img src={img.url} alt="" className="h-full w-full object-cover" loading="lazy" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ── Availability-aware action CTA ────────────────────────────────────────────
+function AvailabilityCTA({ status, cleanPhone, apt }: {
+  status: string;
+  cleanPhone: string;
+  apt: { name: string; number: string; price: number };
+}) {
+  const waMsg = encodeURIComponent(
+    status === 'Occupied'
+      ? `Hello, I'm interested in a residence like Unit ${apt.number} at Porchlight. Please notify me when something similar becomes available.`
+      : status === 'Upcoming' || status === 'Coming Soon'
+      ? `Hello, I'd like to get updates on Unit ${apt.number} at Porchlight when it becomes available.`
+      : `Hello, I would like to schedule a viewing for ${apt.name}. Is it available?`,
+  );
+
+  if (status === 'Occupied') {
+    return (
+      <div className="rounded-lg border border-[#E9E5E0] p-4 text-center">
+        <p className="text-[13px] font-semibold text-slate-700">This residence is currently occupied.</p>
+        <p className="mt-1 text-[12px] text-slate-500">Register your interest and we'll notify you when it becomes available.</p>
+        <a
+          href={`https://wa.me/${cleanPhone}?text=${waMsg}`}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] py-2.5 text-sm font-semibold text-white transition hover:bg-[#20ba5a]"
+        >
+          <MessageCircle className="h-4 w-4" /> Register Interest
+        </a>
+        <Link
+          to="/apartments"
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-[#E9E5E0] py-2.5 text-sm font-semibold text-navy-950 transition hover:bg-[#F3F0EC]"
+        >
+          Explore Available Residences
+        </Link>
+      </div>
+    );
+  }
+
+  if (status === 'Upcoming' || status === 'Coming Soon') {
+    return (
+      <div className="space-y-2">
+        <a
+          href={`https://wa.me/${cleanPhone}?text=${waMsg}`}
+          target="_blank"
+          rel="noreferrer"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] py-2.5 text-sm font-semibold text-white transition hover:bg-[#20ba5a]"
+        >
+          <MessageCircle className="h-4 w-4" /> Get Availability Updates
+        </a>
+        <a
+          href={`tel:${COMPANY.phone}`}
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#E9E5E0] py-2.5 text-sm font-semibold text-navy-950 transition hover:bg-[#F3F0EC]"
+        >
+          <Phone className="h-4 w-4" /> Call Office
+        </a>
+      </div>
+    );
+  }
+
+  // Available
+  return (
+    <div className="space-y-2">
+      <a
+        href={`https://wa.me/${cleanPhone}?text=${waMsg}`}
+        target="_blank"
+        rel="noreferrer"
+        className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] py-2.5 text-sm font-semibold text-white transition hover:bg-[#20ba5a]"
+      >
+        <MessageCircle className="h-4 w-4" /> Schedule a Viewing
+      </a>
+      <a
+        href={`tel:${COMPANY.phone}`}
+        className="flex w-full items-center justify-center gap-2 rounded-lg border border-[#E9E5E0] py-2.5 text-sm font-semibold text-navy-950 transition hover:bg-[#F3F0EC]"
+      >
+        <Phone className="h-4 w-4" /> Call Office
+      </a>
+    </div>
+  );
+}
+
+// ── Main page ────────────────────────────────────────────────────────────────
 export function ApartmentDetailPage() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const state = location.state as { backTo?: string; backLabel?: string } | null;
   const backTo = state?.backTo ?? '/apartments';
-  const backLabel = state?.backLabel ?? 'All Apartments';
+  const backLabel = state?.backLabel ?? 'All Residences';
 
-  // Share link feedback toast
   const [copied, setCopied] = useState(false);
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -46,31 +303,22 @@ export function ApartmentDetailPage() {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  // Saved / Favorite state
   const [isSaved, setIsSaved] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem('porchlight_saved_residences') || '[]');
       return Array.isArray(saved) && saved.includes(id);
-    } catch {
-      return false;
-    }
+    } catch { return false; }
   });
 
   const handleToggleSave = () => {
     try {
       const saved: string[] = JSON.parse(localStorage.getItem('porchlight_saved_residences') || '[]');
-      let updated: string[];
-      if (saved.includes(id!)) {
-        updated = saved.filter((item) => item !== id);
-        setIsSaved(false);
-      } else {
-        updated = [...saved, id!];
-        setIsSaved(true);
-      }
+      const updated = saved.includes(id!)
+        ? saved.filter((x) => x !== id)
+        : [...saved, id!];
       localStorage.setItem('porchlight_saved_residences', JSON.stringify(updated));
-    } catch {
       setIsSaved(!isSaved);
-    }
+    } catch { setIsSaved(!isSaved); }
   };
 
   const query = useQuery({
@@ -81,29 +329,28 @@ export function ApartmentDetailPage() {
 
   const apt = query.data;
 
-  // Similar apartments — reuse the shared ['apartments'] cache populated by the
-  // listings pages so this never fires a duplicate network request.
   const similarQuery = useQuery({
     queryKey: ['apartments'],
     queryFn: () => fetchApartments(),
     enabled: Boolean(apt?.type),
   });
 
-  const similarApartments = (similarQuery.data ?? [])
-    .filter((a) => a.id !== id)
-    .slice(0, 3);
+  const similarApartments = (similarQuery.data ?? []).filter((a) => a.id !== id).slice(0, 3);
 
-  useDocumentTitle(apt ? `${apt.name} — Unit ${apt.number} | Porchlight` : 'Residence Details — Porchlight');
+  useDocumentTitle(
+    apt
+      ? apt.name.toLowerCase().includes(apt.number.toLowerCase())
+        ? `${apt.name} | Porchlight`
+        : `Unit ${apt.number} — ${apt.name} | Porchlight`
+      : 'Residence — Porchlight',
+  );
 
-  if (query.isLoading) return <LoadingState label="Loading apartment residence details…" />;
+  if (query.isLoading) return <LoadingState label="Loading residence…" />;
   if (query.isError || !apt) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-24 text-center">
-        <ErrorState message="We could not find or load this apartment residence." onRetry={() => void query.refetch()} />
-        <Link
-          to={backTo}
-          className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-navy-950 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-navy-900"
-        >
+      <div className="mx-auto max-w-xl px-5 py-24 text-center">
+        <ErrorState message="We could not find this residence." onRetry={() => void query.refetch()} />
+        <Link to={backTo} className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-accent hover:underline">
           <ArrowLeft className="h-4 w-4" /> Back to listings
         </Link>
       </div>
@@ -113,427 +360,296 @@ export function ApartmentDetailPage() {
   const cleanPhone = COMPANY.whatsapp.replace(/\D/g, '');
 
   return (
-    <div className="animate-fade-in bg-slate-50/50 pb-28">
-      {/* ── BREADCRUMB & UTILITY ACTION HEADER ── */}
-      <div className="border-b border-slate-200/80 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
-          <nav className="flex items-center gap-2 text-xs font-semibold text-slate-500 overflow-x-auto no-scrollbar py-0.5">
-            <Link to="/" className="flex items-center gap-1 transition hover:text-navy-950">
-              <Home className="h-3.5 w-3.5" />
-              <span>Home</span>
+    <div className="bg-white pb-24 lg:pb-0">
+      {/* ── Breadcrumb ── */}
+      <div className="border-b border-[#E9E5E0] bg-white">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-2 overflow-x-auto no-scrollbar text-[12px] text-slate-500">
+            <Link to="/" className="flex items-center gap-1 hover:text-navy-950 shrink-0">
+              <Home className="h-3 w-3" /><span>Home</span>
             </Link>
-            <ChevronRight className="h-3.5 w-3.5 text-slate-300 shrink-0" />
-            <Link to={backTo} className="transition hover:text-navy-950 truncate max-w-[150px] sm:max-w-none">
-              {backLabel}
-            </Link>
-            <ChevronRight className="h-3.5 w-3.5 text-slate-300 shrink-0" />
-            <span className="font-bold text-navy-950 truncate max-w-[180px] sm:max-w-none">
-              Unit {apt.number} · {apt.name}
-            </span>
+            <ChevronRight className="h-3 w-3 shrink-0 text-slate-300" />
+            <Link to={backTo} className="hover:text-navy-950 shrink-0 max-w-[120px] truncate">{backLabel}</Link>
+            <ChevronRight className="h-3 w-3 shrink-0 text-slate-300" />
+            <span className="font-semibold text-navy-950 truncate max-w-[160px]">Unit {apt.number}</span>
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-2.5">
-            {/* Share Link Button */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={handleShare}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-95"
-                title="Share this apartment"
-              >
-                {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Share2 className="h-3.5 w-3.5 text-slate-500" />}
-                <span>{copied ? 'Copied!' : 'Share'}</span>
-              </button>
-            </div>
-
-            {/* Save / Favorite Button */}
+          <div className="flex shrink-0 items-center gap-1.5">
+            <button
+              type="button"
+              onClick={handleShare}
+              aria-label="Share this residence"
+              className="flex h-8 items-center gap-1.5 rounded border border-[#E9E5E0] px-2.5 text-[12px] font-medium text-slate-600 hover:bg-[#F3F0EC] transition"
+            >
+              {copied ? <Check className="h-3.5 w-3.5 text-[#27866A]" /> : <Share2 className="h-3.5 w-3.5" />}
+              {copied ? 'Copied' : 'Share'}
+            </button>
             <button
               type="button"
               onClick={handleToggleSave}
-              className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold shadow-2xs transition active:scale-95 ${
-                isSaved
-                  ? 'border-red-200 bg-red-50 text-red-600'
-                  : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+              aria-label={isSaved ? 'Remove from saved' : 'Save this residence'}
+              className={`flex h-8 w-8 items-center justify-center rounded border transition ${
+                isSaved ? 'border-red-200 bg-red-50 text-red-500' : 'border-[#E9E5E0] text-slate-500 hover:bg-[#F3F0EC]'
               }`}
-              title={isSaved ? 'Remove from saved' : 'Save this apartment'}
             >
-              <Heart className={`h-3.5 w-3.5 ${isSaved ? 'fill-red-500 text-red-500' : 'text-slate-500'}`} />
-              <span className="hidden sm:inline">{isSaved ? 'Saved' : 'Save'}</span>
+              <Heart className={`h-3.5 w-3.5 ${isSaved ? 'fill-red-500' : ''}`} />
             </button>
-
-            {/* Virtual Tour Quick Link */}
             <Link
               to="/tour"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-accent/30 bg-accent/5 px-3 py-1.5 text-xs font-bold text-accent shadow-2xs transition hover:bg-accent/10 active:scale-95"
+              className="flex h-8 items-center gap-1.5 rounded border border-[#E9E5E0] px-2.5 text-[12px] font-medium text-slate-600 hover:bg-[#F3F0EC] transition"
             >
-              <Play className="h-3.5 w-3.5 fill-accent text-accent" />
-              <span>Virtual Tour</span>
+              <Play className="h-3.5 w-3.5 fill-current" /> Tour
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
-        {/* ── PHOTO GALLERY ── */}
-        <ImageGallery images={apt.images} apartmentName={apt.name} />
+      {/* ── Gallery ── */}
+      <Gallery images={apt.images} name={apt.name} />
 
-        {/* ── 2-COLUMN MAIN CONTENT GRID ── */}
-        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
-          {/* ── LEFT: DETAILS & FEATURES (8 COLS) ── */}
-          <div className="space-y-8 lg:col-span-7 xl:col-span-8">
-            {/* Primary Residence Info Card */}
-            <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-8">
-              <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-100 pb-6">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 rounded-md bg-accent/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
-                      <Sparkles className="h-3 w-3" /> Bole Prime Living
-                    </span>
-                    <span className="text-xs text-slate-400">·</span>
-                    <span className="text-xs font-bold text-slate-500">Unit {apt.number}</span>
-                  </div>
-                  <h1 className="mt-1 font-display text-2xl font-black tracking-tight text-navy-950 sm:text-4xl">
-                    {apt.name}
-                  </h1>
-                  <p className="mt-1.5 flex items-center gap-2 text-xs font-semibold text-slate-500 sm:text-sm">
-                    <MapPin className="h-4 w-4 shrink-0 text-accent" />
-                    <span>{apt.location}</span>
-                    {apt.floor != null ? <span className="text-slate-300">·</span> : null}
-                    {apt.floor != null ? (
-                      <span className="rounded-md bg-slate-100 px-2 py-0.5 text-navy-900 font-bold text-xs">
-                        Floor {apt.floor}
-                      </span>
-                    ) : null}
-                  </p>
-                </div>
+      {/* ── Page body ── */}
+      <div className="mx-auto max-w-6xl px-5 pt-8 sm:px-8">
+        <div className="grid gap-10 lg:grid-cols-12">
 
-                <StatusBadge status={apt.availabilityStatus} availableFrom={apt.availableFrom} />
+          {/* ── LEFT column ── */}
+          <div className="space-y-8 lg:col-span-7">
+
+            {/* Identity */}
+            <div>
+              <StatusBadge status={apt.availabilityStatus} availableFrom={apt.availableFrom} />
+              <h1 className="mt-2 font-display text-3xl font-semibold tracking-tight text-navy-950 sm:text-4xl">
+                {apt.name}
+              </h1>
+              <p className="mt-1 text-[13px] text-slate-500">
+                {apt.name.toLowerCase().includes(apt.number.toLowerCase())
+                  ? apt.type
+                  : `Unit ${apt.number} · ${apt.type}`}
+                {apt.floor != null ? ` · Floor ${apt.floor}` : ''}
+              </p>
+              <p className="mt-2 flex items-center gap-1.5 text-[13px] text-slate-500">
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-accent" />
+                {apt.location}{apt.floor != null ? ` · Floor ${apt.floor}` : ''}
+              </p>
+
+              {/* Price */}
+              <div className="mt-5 flex items-baseline gap-2">
+                <span className="font-display text-3xl font-semibold text-navy-950">
+                  {formatPrice(apt.price)}
+                </span>
+                <span className="text-sm text-slate-500">ETB / month</span>
               </div>
+              <p className="mt-1 text-[12px] text-[#27866A] font-medium">
+                Zero broker commission · Direct landlord lease
+              </p>
+            </div>
 
-              {/* Core Specs Metric Pills */}
-              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 p-3.5 transition hover:bg-slate-50">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                    <BedDouble className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Bedrooms</p>
-                    <p className="font-display text-sm font-bold text-navy-950 sm:text-base">
-                      {apt.bedrooms} {apt.bedrooms === 1 ? 'Bed' : 'Beds'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 p-3.5 transition hover:bg-slate-50">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                    <Bath className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Bathrooms</p>
-                    <p className="font-display text-sm font-bold text-navy-950 sm:text-base">
-                      {apt.bathrooms} {apt.bathrooms === 1 ? 'Bath' : 'Baths'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 p-3.5 transition hover:bg-slate-50">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                    <Maximize2 className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Area</p>
-                    <p className="font-display text-sm font-bold text-navy-950 sm:text-base">
-                      {apt.size ? `${apt.size} m²` : 'Spacious'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 p-3.5 transition hover:bg-slate-50">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                    <Building2 className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Building Level</p>
-                    <p className="font-display text-sm font-bold text-navy-950 sm:text-base">
-                      {apt.floor != null ? `Floor ${apt.floor}` : 'Mid-High'}
-                    </p>
-                  </div>
-                </div>
+            {/* Specs */}
+            <div className="grid grid-cols-3 gap-px border border-[#E9E5E0] bg-[#E9E5E0]">
+              <div className="flex flex-col items-center gap-1 bg-white py-5 px-3 text-center">
+                <BedDouble className="h-4 w-4 text-slate-400" aria-hidden />
+                <span className="text-lg font-semibold text-navy-950">{apt.bedrooms}</span>
+                <span className="text-[11px] text-slate-500">Bedrooms</span>
               </div>
-
-              {/* Monthly Rate Showcase Banner */}
-              <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-accent/20 bg-gradient-to-r from-accent/5 via-accent/10 to-transparent p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Monthly Lease Rate</p>
-                  <p className="font-display text-2xl font-extrabold text-navy-950 sm:text-3xl">
-                    {formatPrice(apt.price)} <span className="text-sm font-semibold text-slate-500">ETB / month</span>
-                  </p>
-                </div>
-                <div className="rounded-xl border border-accent/20 bg-white/80 px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs backdrop-blur-sm sm:text-right">
-                  <span className="block font-bold text-emerald-700">✓ Inclusive Living</span>
-                  <span className="text-[11px] text-slate-500">WiFi, 24/7 Generator, Reserve Water & Parking included</span>
-                </div>
+              <div className="flex flex-col items-center gap-1 bg-white py-5 px-3 text-center">
+                <Bath className="h-4 w-4 text-slate-400" aria-hidden />
+                <span className="text-lg font-semibold text-navy-950">{apt.bathrooms}</span>
+                <span className="text-[11px] text-slate-500">Bathrooms</span>
+              </div>
+              <div className="flex flex-col items-center gap-1 bg-white py-5 px-3 text-center">
+                <Maximize2 className="h-4 w-4 text-slate-400" aria-hidden />
+                <span className="text-lg font-semibold text-navy-950">{apt.size ?? '—'}</span>
+                <span className="text-[11px] text-slate-500">m²</span>
               </div>
             </div>
 
-            {/* Features & Amenities */}
-            {apt.amenities.length > 0 && (
-              <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-8">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                  <div>
-                    <h2 className="font-display text-xl font-bold tracking-tight text-navy-950 sm:text-2xl">
-                      Features & Amenities
-                    </h2>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      Everything installed and maintained directly by building management
-                    </p>
-                  </div>
-                  <span className="rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-bold text-accent">
-                    {apt.amenities.length} Included
-                  </span>
-                </div>
-
-                <ul className="mt-6 grid grid-cols-1 gap-3.5 sm:grid-cols-2 md:grid-cols-3">
-                  {apt.amenities.map((a) => {
-                    const Icon = getAmenityIcon(a.icon ?? a.slug);
-                    return (
-                      <li
-                        key={a.id}
-                        className="group flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/60 p-3.5 transition-all duration-200 hover:border-accent/40 hover:bg-white hover:shadow-md"
-                      >
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy-950/5 text-navy-800 transition-colors group-hover:bg-accent group-hover:text-white">
-                          <Icon className="h-4 w-4" aria-hidden />
-                        </div>
-                        <div className="min-w-0">
-                          <span className="block text-xs font-bold text-navy-950 truncate">{a.name}</span>
-                          <span className="block text-[11px] text-slate-400 truncate">
-                            {a.description || 'Verified on-site'}
-                          </span>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
+            {/* Description */}
+            {apt.description && (
+              <div>
+                <h2 className="font-display text-xl font-semibold text-navy-950 mb-3">About this residence</h2>
+                <p className="text-[14px] leading-relaxed text-slate-600">{apt.description}</p>
               </div>
             )}
 
-            {/* Building & Floor Specifications Table */}
-            <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-8">
-              <h2 className="font-display text-xl font-bold tracking-tight text-navy-950 sm:text-2xl">
-                Building & Residence Specifications
-              </h2>
-              <div className="mt-5 divide-y divide-slate-100 text-xs sm:text-sm">
-                <div className="flex justify-between py-3">
-                  <span className="font-medium text-slate-500">Unit Number</span>
-                  <span className="font-bold text-navy-950">Unit {apt.number}</span>
-                </div>
-                <div className="flex justify-between py-3">
-                  <span className="font-medium text-slate-500">Residence Type</span>
-                  <span className="font-bold text-navy-950">{apt.type}</span>
-                </div>
-                <div className="flex justify-between py-3">
-                  <span className="font-medium text-slate-500">Story / Floor</span>
-                  <span className="font-bold text-navy-950">
-                    {apt.floor != null ? `Floor ${apt.floor} (Stories 3–10)` : 'Upper Level'}
-                  </span>
-                </div>
-                <div className="flex justify-between py-3">
-                  <span className="font-medium text-slate-500">Vertical Transit</span>
-                  <span className="font-bold text-navy-950">Dual High-Speed Elevators + Service Stairs</span>
-                </div>
-                <div className="flex justify-between py-3">
-                  <span className="font-medium text-slate-500">Furnishing State</span>
-                  <span className="font-bold text-navy-950">Fully Furnished & Ready for Move-In</span>
-                </div>
-                <div className="flex justify-between py-3">
-                  <span className="font-medium text-slate-500">Management & Maintenance</span>
-                  <span className="font-bold text-accent">Direct Porchlight On-Site Management</span>
+            {/* Amenities */}
+            {apt.amenities.length > 0 && (
+              <div>
+                <h2 className="font-display text-xl font-semibold text-navy-950 mb-1">Features & Amenities</h2>
+                <p className="mb-4 text-[12px] text-slate-500">{apt.amenities.length} included</p>
+                <div className="grid grid-cols-2 gap-px border border-[#E9E5E0] bg-[#E9E5E0] sm:grid-cols-3">
+                  {apt.amenities.map((a) => {
+                    const Icon = getAmenityIcon(a.icon ?? a.slug);
+                    return (
+                      <div key={a.id} className="flex items-center gap-3 bg-white p-4">
+                        <Icon className="h-4 w-4 shrink-0 text-accent" aria-hidden />
+                        <span className="text-[13px] font-medium text-navy-950">{a.name}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
+            )}
+
+            {/* Specifications table */}
+            <div>
+              <h2 className="font-display text-xl font-semibold text-navy-950 mb-3">Specifications</h2>
+              <dl className="divide-y divide-[#E9E5E0] text-[13px]">
+                {[
+                  ['Unit Number', `Unit ${apt.number}`],
+                  ['Type', apt.type],
+                  ['Floor', apt.floor != null ? `Floor ${apt.floor}` : '—'],
+                  ['Furnishing', 'Fully furnished, move-in ready'],
+                  ['Management', 'Direct Porchlight on-site management'],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex justify-between py-2.5">
+                    <dt className="text-slate-500">{label}</dt>
+                    <dd className="font-semibold text-navy-950 text-right max-w-[55%]">{value}</dd>
+                  </div>
+                ))}
+              </dl>
             </div>
 
-            {/* Prime Bole Location & Neighborhood Guide */}
-            <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-xs sm:p-8">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
-                <div>
-                  <h2 className="font-display text-xl font-bold tracking-tight text-navy-950 sm:text-2xl">
-                    Location & Neighborhood
-                  </h2>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Centrally located in Bole, Addis Ababa with quick access to key destinations
-                  </p>
-                </div>
-                <a
-                  href="https://maps.google.com/?q=Porchlight+Apartments+Bole+Addis+Ababa"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-accent hover:underline"
-                >
-                  <span>Open in Google Maps</span>
-                  <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-              </div>
-
-              {/* Embedded Map */}
-              <div className="mt-5 overflow-hidden rounded-2xl border border-slate-200/90 shadow-xs">
+            {/* Map */}
+            <div>
+              <h2 className="font-display text-xl font-semibold text-navy-950 mb-3">Location</h2>
+              <div className="overflow-hidden rounded-lg border border-[#E9E5E0]">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.677421793918!2d38.78397397483259!3d9.00180039105844!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x164b85771a56ea35%3A0xba9aa88b7ce682!2sPorchlight%20apartments!5e0!3m2!1sen!2set!4v1789989139257!5m2!1sen!2set"
                   width="100%"
-                  height="260"
+                  height="240"
+                  className="h-52 w-full sm:h-60"
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="strict-origin-when-cross-origin"
-                  title="Porchlight Apartments Location Map"
+                  title="Porchlight Apartments location"
                 />
               </div>
             </div>
           </div>
 
-          {/* ── RIGHT: STICKY LEASING HUB & INQUIRY FORM (4 COLS) ── */}
-          <aside id="inquiry-section" className="space-y-6 lg:col-span-5 xl:col-span-4 scroll-mt-24">
-            <div className="sticky top-6 space-y-6">
-              {/* Main Booking Card */}
-              <div className="rounded-3xl border border-slate-200/90 bg-white p-6 shadow-md shadow-navy-950/5 sm:p-7">
-                <div className="border-b border-slate-100 pb-5">
-                  <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Lease Pricing</p>
-                  <div className="mt-1 flex items-baseline gap-2">
-                    <span className="font-display text-3xl font-black text-navy-950 sm:text-4xl">
-                      {formatPrice(apt.price)}
-                    </span>
-                    <span className="text-xs font-semibold text-slate-500">ETB / month</span>
-                  </div>
-                  <p className="mt-1 text-[11px] font-medium text-emerald-700">
-                    ✓ Zero broker commission · Direct landlord lease
-                  </p>
+          {/* ── RIGHT column — sticky inquiry panel ── */}
+          <aside
+            id="inquiry-section"
+            className="scroll-mt-20 lg:col-span-5"
+          >
+            <div className="lg:sticky lg:top-20 space-y-5">
+              {/* Price card */}
+              <div className="rounded-xl border border-[#E9E5E0] bg-white p-5">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-400">Monthly Rent</p>
+                <div className="mt-1 flex items-baseline gap-2">
+                  <span className="font-display text-3xl font-semibold text-navy-950">{formatPrice(apt.price)}</span>
+                  <span className="text-sm text-slate-500">ETB / month</span>
+                </div>
+                <StatusBadge status={apt.availabilityStatus} availableFrom={apt.availableFrom} />
+
+                <div className="mt-4">
+                  <AvailabilityCTA status={apt.availabilityStatus} cleanPhone={cleanPhone} apt={{ name: apt.name, number: apt.number, price: apt.price }} />
                 </div>
 
-                {/* Instant Communication CTAs */}
-                <div className="mt-5 space-y-2.5">
-                  <a
-                    href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(
-                      `Hello, I would like to inquire about ${apt.name} (Unit ${apt.number}) priced at ${formatPrice(apt.price)} ETB/mo. Is it available for a viewing?`,
-                    )}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] py-3 text-xs font-bold text-white shadow-md shadow-emerald-500/20 transition hover:bg-[#20ba5a] active:scale-95"
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                    Chat with Leasing Agent on WhatsApp
-                  </a>
-
-                  <a
-                    href={`tel:${COMPANY.phone}`}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white py-2.5 text-xs font-bold text-navy-950 shadow-2xs transition hover:bg-slate-50 active:scale-95"
-                  >
-                    <Phone className="h-3.5 w-3.5 text-accent" />
-                    Call Office: {COMPANY.phone}
-                  </a>
-                </div>
-
-                {/* Form Divider */}
-                <div className="relative my-6 text-center">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-100" />
-                  </div>
-                  <span className="relative bg-white px-3 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                    Or send online inquiry
-                  </span>
-                </div>
-
-                {/* Inquiry Form */}
-                <InquiryForm defaultApartmentId={apt.id} />
+                {apt.availabilityStatus === 'Available' && (
+                  <>
+                    <div className="relative my-5 text-center">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-[#E9E5E0]" />
+                      </div>
+                      <span className="relative bg-white px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                        Or enquire online
+                      </span>
+                    </div>
+                    <InquiryForm defaultApartmentId={apt.id} />
+                  </>
+                )}
               </div>
 
-              {/* Porchlight Resident Guarantee Card */}
-              <div className="rounded-3xl border border-slate-200/90 bg-white p-5 shadow-xs space-y-3 text-xs">
-                <p className="font-bold uppercase tracking-wider text-slate-400">
-                  Porchlight Living Guarantee
-                </p>
-                <div className="flex items-start gap-2.5 text-slate-600">
-                  <Check className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>
-                    <strong>100% Genuine Photography</strong> — every unit photo represents the exact finishes.
-                  </span>
-                </div>
-                <div className="flex items-start gap-2.5 text-slate-600">
-                  <Check className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>
-                    <strong>Rapid Maintenance Team</strong> on-site to handle repairs, plumbing, or electrical issues.
-                  </span>
-                </div>
-                <div className="flex items-start gap-2.5 text-slate-600">
-                  <Check className="h-4 w-4 shrink-0 text-emerald-500 mt-0.5" />
-                  <span>
-                    <strong>Flexible Corporate Leases</strong> with diplomatic invoicing & VAT documentation.
-                  </span>
-                </div>
+              {/* Guarantees */}
+              <div className="rounded-xl border border-[#E9E5E0] bg-[#F8F6F2] p-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-400 mb-3">Our Commitment</p>
+                <ul className="space-y-2.5">
+                  {[
+                    'Genuine property photography — no staging or replacements',
+                    'On-site maintenance team for all repairs',
+                    'Flexible corporate leases with VAT documentation',
+                  ].map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-[12px] text-slate-600">
+                      <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#27866A]" aria-hidden />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </aside>
         </div>
 
-        {/* ── SIMILAR RESIDENCES SECTION ── */}
+        {/* ── Similar residences ── */}
         {similarApartments.length > 0 && (
-          <section className="mt-16 sm:mt-24 border-t border-slate-200/80 pt-12">
-            <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-accent">
-                  Compare Options
-                </p>
-                <h2 className="mt-1 font-display text-2xl font-bold tracking-tight text-navy-950 sm:text-3xl">
-                  Similar Residences You Might Like
-                </h2>
-              </div>
-              <Link
-                to={backTo}
-                className="inline-flex items-center gap-1.5 text-sm font-bold text-accent hover:underline"
-              >
-                <span>Browse all {backLabel.toLowerCase()}</span>
-                <ChevronRight className="h-4 w-4" />
+          <section className="mt-16 border-t border-[#E9E5E0] pt-12">
+            <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+              <h2 className="font-display text-2xl font-semibold tracking-tight text-navy-950">
+                Other residences
+              </h2>
+              <Link to={backTo} className="text-sm font-semibold text-accent hover:underline">
+                Browse all
               </Link>
             </div>
-
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {similarApartments.map((otherApt) => (
-                <ApartmentCard key={otherApt.id} apartment={otherApt} />
+            <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
+              {similarApartments.map((a) => (
+                <ApartmentCard key={a.id} apartment={a} />
               ))}
             </div>
           </section>
         )}
       </div>
 
-      {/* ── MOBILE STICKY CONVERSION BAR ── */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-slate-200/90 bg-white/95 px-4 py-3 shadow-2xl backdrop-blur-md lg:hidden">
+      {/* ── Mobile sticky bottom bar ── */}
+      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-[#E9E5E0] bg-white px-5 py-3 lg:hidden">
         <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Monthly Rent</p>
-            <p className="font-display text-base font-black text-navy-950 sm:text-lg">
-              {formatPrice(apt.price)} <span className="text-xs font-normal text-slate-500">/ mo</span>
+            <p className="text-[11px] font-medium text-slate-400">Monthly rent</p>
+            <p className="font-display text-lg font-semibold text-navy-950">
+              {formatPrice(apt.price)} <span className="text-[12px] font-normal text-slate-500">ETB/mo</span>
             </p>
           </div>
           <div className="flex items-center gap-2">
+            {/* WhatsApp — always present, label changes by status */}
             <a
               href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(
-                `Hello, I'm interested in ${apt.name} (Unit ${apt.number}). Is it available?`,
+                apt.availabilityStatus === 'Occupied'
+                  ? `Hello, I'd like to register interest for Unit ${apt.number} at Porchlight.`
+                  : `Hello, I'd like to enquire about Unit ${apt.number} — is it available?`
               )}`}
               target="_blank"
               rel="noreferrer"
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-emerald-50 text-emerald-600 shadow-2xs transition hover:bg-emerald-100"
               aria-label="Contact via WhatsApp"
+              className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#25D366] text-white"
             >
               <MessageCircle className="h-4 w-4" />
             </a>
-            <button
-              type="button"
-              onClick={() => {
-                const el = document.getElementById('inquiry-section');
-                el?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-accent/25 transition active:scale-95 sm:text-sm"
-            >
-              Inquire / Book
-            </button>
+            {apt.availabilityStatus === 'Available' ? (
+              <button
+                type="button"
+                onClick={() => document.getElementById('inquiry-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="rounded-lg bg-accent px-4 py-2.5 text-[13px] font-semibold text-white transition hover:bg-accent-hover active:scale-[0.98]"
+              >
+                Enquire Now
+              </button>
+            ) : apt.availabilityStatus === 'Occupied' ? (
+              <button
+                type="button"
+                onClick={() => document.getElementById('inquiry-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="rounded-lg border border-[#E9E5E0] px-4 py-2.5 text-[13px] font-semibold text-navy-950 transition hover:bg-[#F3F0EC]"
+              >
+                Register Interest
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => document.getElementById('inquiry-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="rounded-lg border border-[#E9E5E0] px-4 py-2.5 text-[13px] font-semibold text-navy-950 transition hover:bg-[#F3F0EC]"
+              >
+                Get Updates
+              </button>
+            )}
           </div>
         </div>
       </div>
