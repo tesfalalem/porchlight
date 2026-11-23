@@ -11,8 +11,8 @@ const schema = z.object({
   phone: z.string().min(6, 'Phone is required'),
   email: z.string().email('Valid email is required'),
   apartmentId: z.string().optional(),
-  subject: z.string().min(3, 'Subject is required'),
-  message: z.string().min(10, 'Please include a brief message'),
+  subject: z.string().optional(),
+  message: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -54,6 +54,8 @@ export function InquiryForm({
     mutation.mutate({
       ...values,
       apartmentId: values.apartmentId || undefined,
+      subject: values.subject?.trim() || (defaultApartmentId ? 'Apartment inquiry' : 'General Inquiry'),
+      message: values.message?.trim() || '',
     });
   };
 

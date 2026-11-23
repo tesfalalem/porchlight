@@ -7,8 +7,8 @@ export async function createInquiry(input: {
   email: string;
   phone: string;
   apartmentId?: string | null;
-  subject: string;
-  message: string;
+  subject?: string | null;
+  message?: string | null;
 }) {
   if (input.apartmentId) {
     const apt = await prisma.apartment.findFirst({
@@ -36,10 +36,18 @@ export async function createInquiry(input: {
     });
   }
 
+  const fallbackSubject =
+    input.subject && input.subject.trim()
+      ? input.subject.trim()
+      : input.apartmentId
+      ? 'Apartment inquiry'
+      : 'General Inquiry';
+  const fallbackMessage = input.message && input.message.trim() ? input.message.trim() : '';
+
   const inquiry = await prisma.inquiry.create({
     data: {
-      subject: input.subject,
-      message: input.message,
+      subject: fallbackSubject,
+      message: fallbackMessage,
       apartmentId: input.apartmentId ?? null,
       customerId: customer.id,
       status: 'New',

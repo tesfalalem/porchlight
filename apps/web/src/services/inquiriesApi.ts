@@ -6,8 +6,8 @@ export interface CreateInquiryPayload {
   email: string;
   phone: string;
   apartmentId?: string;
-  subject: string;
-  message: string;
+  subject?: string;
+  message?: string;
 }
 
 export async function createInquiry(payload: CreateInquiryPayload): Promise<InquiryDto> {

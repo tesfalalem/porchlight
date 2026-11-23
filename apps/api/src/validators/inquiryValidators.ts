@@ -8,8 +8,8 @@ export const createInquiryValidators = [
   body('email').isEmail().withMessage('Valid email is required').normalizeEmail(),
   body('phone').trim().notEmpty().withMessage('Phone is required'),
   body('apartmentId').optional({ nullable: true }).isString(),
-  body('subject').trim().notEmpty().withMessage('Subject is required'),
-  body('message').trim().notEmpty().withMessage('Message is required'),
+  body('subject').optional({ nullable: true }).isString(),
+  body('message').optional({ nullable: true }).isString(),
 ];
 
 export const updateInquiryValidators = [

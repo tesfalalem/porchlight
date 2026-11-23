@@ -170,6 +170,22 @@
     100% { background-position: 200% 0; }
   }
 
+  /* Smooth image change animation for gallery */
+  @keyframes galleryImageFade {
+    0% {
+      opacity: 0.25;
+      transform: scale(0.99);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-gallery-fade {
+    animation: galleryImageFade 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
   .glass-dark {
     @apply border border-white/15 bg-navy-950/85 backdrop-blur-md;
   }

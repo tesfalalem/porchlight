@@ -21,12 +21,12 @@ export function HomePage() {
     queryFn: () => fetchApartments(),
   });
 
-  const featuredApartments = (apartmentsQuery.data ?? []).slice(0, 3);
+  const featuredApartments = (apartmentsQuery.data ?? []).slice(0, 6);
 
   return (
     <div>
       {/* ── HERO ─────────────────────────────────────────────── */}
-      <section className="relative flex min-h-[calc(100svh-56px)] flex-col justify-end overflow-hidden bg-[#34282D]">
+      <section className="relative flex min-h-[460px] sm:min-h-[calc(100svh-56px)] flex-col justify-end overflow-hidden bg-[#34282D]">
         <img
           src={HERO_IMAGE}
           alt=""
@@ -37,31 +37,31 @@ export function HomePage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#34282D]/85 via-[#34282D]/30 to-transparent" />
 
-        <div className="relative z-10 px-5 pb-10 sm:px-10 sm:pb-16 md:max-w-3xl lg:pb-20">
-          <p className="kicker mb-3 text-white/60">Bole, Addis Ababa</p>
+        <div className="relative z-10 px-5 pb-8 sm:px-10 sm:pb-16 md:max-w-3xl lg:pb-20">
+          <p className="kicker mb-2 text-white/60 sm:mb-3">Bole, Addis Ababa</p>
 
-          <h1 className="font-display text-[2rem] font-semibold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="font-display text-[1.85rem] font-semibold leading-[1.12] tracking-tight text-white sm:text-5xl lg:text-6xl">
             Live beautifully<br />in Bole.
           </h1>
 
-          <p className="mt-3 max-w-md text-[14px] leading-relaxed text-white/70 sm:text-[15px]">
+          <p className="mt-2.5 max-w-md text-[13px] leading-relaxed text-white/70 sm:mt-3 sm:text-[15px]">
             Discover thoughtfully furnished residences designed for comfortable city living.
           </p>
 
-          <div className="mt-6 flex flex-wrap gap-2.5">
+          <div className="mt-4 sm:mt-6 flex items-center gap-2 sm:gap-3">
             <Link
               to="/apartments"
-              className="inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-hover active:scale-[0.98]"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-accent-hover active:scale-[0.98] whitespace-nowrap"
             >
-              Explore Residences
-              <ArrowRight className="h-4 w-4" />
+              <span>Explore Residences</span>
+              <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
             </Link>
             <Link
               to="/tour"
-              className="inline-flex items-center gap-2 rounded-lg border border-white/25 px-5 py-2.5 text-sm font-semibold text-white transition hover:border-white/40 hover:bg-white/8"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-lg border border-white/25 px-3.5 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white transition hover:border-white/40 hover:bg-white/8 active:scale-[0.98] whitespace-nowrap"
             >
-              <Play className="h-3.5 w-3.5 fill-current" />
-              Video Tour
+              <Play className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-current shrink-0" />
+              <span>Video Tour</span>
             </Link>
           </div>
         </div>
@@ -113,8 +113,8 @@ export function HomePage() {
             </div>
           </div>
 
-          {/* 2-col mobile → 4-col sm+ amenity grid */}
-          <div className="grid grid-cols-2 gap-px border border-[#E9E5E0] bg-[#E9E5E0] sm:grid-cols-4">
+          {/* 2-col mobile → 3-col sm+ amenity grid (2 balanced rows of 3, eliminating blank cells) */}
+          <div className="grid grid-cols-2 gap-px border border-[#E9E5E0] bg-[#E9E5E0] sm:grid-cols-3">
             {BUILDING_AMENITIES.map((a) => {
               const Icon = getAmenityIcon(a.icon ?? a.slug);
               return (

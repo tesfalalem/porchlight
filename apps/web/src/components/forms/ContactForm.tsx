@@ -9,8 +9,8 @@ const schema = z.object({
   name: z.string().min(2, 'Name is required'),
   phone: z.string().min(6, 'Phone is required'),
   email: z.string().email('Valid email is required'),
-  subject: z.string().min(3, 'Subject is required'),
-  message: z.string().min(10, 'Please include a brief message'),
+  subject: z.string().optional(),
+  message: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -27,7 +27,12 @@ export function ContactForm() {
   });
 
   const mutation = useMutation({
-    mutationFn: (values: FormValues) => createInquiry(values),
+    mutationFn: (values: FormValues) =>
+      createInquiry({
+        ...values,
+        subject: values.subject?.trim() || 'Contact form message',
+        message: values.message?.trim() || '',
+      }),
     onSuccess: () => reset(),
   });
 
