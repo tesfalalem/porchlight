@@ -10,9 +10,6 @@ import { StatusBadge } from '../../components/common/StatusBadge';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { fetchInquiries } from '../../services/inquiriesApi';
 
-// Subjects created by admin — excluded from this view
-const ADMIN_SUBJECTS = ['rental registration'];
-
 export function AdminInquiriesPage() {
   useDocumentTitle('Inquiries');
   const navigate = useNavigate();
@@ -26,18 +23,12 @@ export function AdminInquiriesPage() {
 
   useEffect(() => { setPage(1); }, [search]);
 
-  // Only show public website inquiries (exclude admin-created ones)
-  const publicInquiries = useMemo(() => {
-    return (listQuery.data ?? []).filter(
-      (i) => !ADMIN_SUBJECTS.includes(i.subject.toLowerCase().trim()),
-    );
-  }, [listQuery.data]);
-
-  const totalNew = publicInquiries.filter((i) => i.status === 'New').length;
+  const inquiries = listQuery.data ?? [];
+  const totalNew = inquiries.filter((i) => i.status === 'New').length;
 
   const { slice: pageRows, pageCount } = useMemo(
-    () => paginate(publicInquiries, page, 10),
-    [publicInquiries, page],
+    () => paginate(inquiries, page, 10),
+    [inquiries, page],
   );
 
   return (
@@ -61,7 +52,7 @@ export function AdminInquiriesPage() {
       <div className="mt-5">
         <input
           type="search"
-          placeholder="Search by subject, customer name or email…"
+          placeholder="Search by subject, message, name, email, or phone…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full max-w-md rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-navy-900 focus:outline-none focus:ring-2 focus:ring-navy-900/10"
@@ -74,7 +65,7 @@ export function AdminInquiriesPage() {
         {listQuery.isError ? <ErrorState onRetry={() => void listQuery.refetch()} /> : null}
         {pageRows.length ? (
           <>
-            <DataTable columns={['Subject & Message', 'Customer', 'Apartment', 'Status', 'Date']}>
+            <DataTable columns={['Subject & Message', 'Inquirer', 'Apartment', 'Status', 'Date']}>
               {pageRows.map((i) => (
                 <tr
                   key={i.id}
@@ -86,8 +77,8 @@ export function AdminInquiriesPage() {
                     <p className="mt-0.5 line-clamp-1 text-xs text-slate-400">{i.message}</p>
                   </td>
                   <td className="px-4 py-3">
-                    <p className="font-medium text-slate-800">{i.customer?.name}</p>
-                    <p className="text-xs text-slate-400">{i.customer?.phone}</p>
+                    <p className="font-medium text-slate-800">{i.name || i.customer?.name || 'Website Inquirer'}</p>
+                    <p className="text-xs text-slate-400">{i.phone || i.customer?.phone || i.email || i.customer?.email}</p>
                   </td>
                   <td className="px-4 py-3">
                     {i.apartment ? (

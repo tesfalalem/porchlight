@@ -28,6 +28,7 @@ const AdminInquiriesPage     = lazy(() => import('./pages/admin/AdminInquiriesPa
 const InquiryDetailPage      = lazy(() => import('./pages/admin/InquiryDetailPage').then(m => ({ default: m.InquiryDetailPage })));
 const AddCustomerPage        = lazy(() => import('./pages/admin/AddCustomerPage').then(m => ({ default: m.AddCustomerPage })));
 const CustomerDetailPage     = lazy(() => import('./pages/admin/CustomerDetailPage').then(m => ({ default: m.CustomerDetailPage })));
+const SettingsPage           = lazy(() => import('./pages/admin/SettingsPage').then(m => ({ default: m.SettingsPage })));
 
 function PageFallback() {
   return <LoadingState label="Loading…" />;
@@ -64,6 +65,7 @@ export default function App() {
               <Route path="customers/:id" element={<CustomerDetailPage />} />
               <Route path="inquiries" element={<AdminInquiriesPage />} />
               <Route path="inquiries/:id" element={<InquiryDetailPage />} />
+              <Route path="settings" element={<SettingsPage />} />
             </Route>
           </Routes>
         </Suspense>

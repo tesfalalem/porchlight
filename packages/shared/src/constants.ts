@@ -25,6 +25,7 @@ export const COMPANY = {
     facebook: 'https://web.facebook.com/profile.php?id=61576106316704',
     instagram: 'https://www.instagram.com/porchlight_apartments/',
     linkedin: 'https://linkedin.com/company/porchlightapartment',
+    tiktok: 'https://www.tiktok.com/@porchlightapartment',
   },
 } as const;
 

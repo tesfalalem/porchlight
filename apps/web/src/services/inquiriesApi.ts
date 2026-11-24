@@ -3,8 +3,8 @@ import { apiClient } from '../lib/apiClient';
 
 export interface CreateInquiryPayload {
   name: string;
-  email: string;
-  phone: string;
+  email?: string;
+  phone?: string;
   apartmentId?: string;
   subject?: string;
   message?: string;

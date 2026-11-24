@@ -4,35 +4,15 @@ import { mapCustomer } from '../utils/mappers.js';
 
 export async function listCustomers(search?: string) {
   const customers = await prisma.customer.findMany({
-    where: {
-      // Show customers with no inquiries OR with at least one inquiry not linked to an archived apartment
-      OR: [
-        { inquiries: { none: {} } },
-        {
-          inquiries: {
-            some: {
-              OR: [
-                { apartmentId: null },
-                { apartment: { isArchived: false } },
-              ],
-            },
-          },
-        },
-      ],
-      ...(search
-        ? {
-            AND: [
-              {
-                OR: [
-                  { name: { contains: search, mode: 'insensitive' } },
-                  { email: { contains: search, mode: 'insensitive' } },
-                  { phone: { contains: search, mode: 'insensitive' } },
-                ],
-              },
-            ],
-          }
-        : {}),
-    },
+    where: search
+      ? {
+          OR: [
+            { name: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+            { phone: { contains: search, mode: 'insensitive' } },
+          ],
+        }
+      : undefined,
     orderBy: { createdAt: 'desc' },
   });
   return customers.map(mapCustomer);
@@ -43,12 +23,6 @@ export async function getCustomerById(id: string) {
     where: { id },
     include: {
       inquiries: {
-        where: {
-          OR: [
-            { apartmentId: null },
-            { apartment: { isArchived: false } },
-          ],
-        },
         orderBy: { createdAt: 'desc' },
         include: {
           apartment: { select: { id: true, name: true, number: true } },

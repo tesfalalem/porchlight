@@ -78,7 +78,7 @@ export async function getDashboardStats(): Promise<DashboardStatsDto> {
       subject: i.subject,
       status: i.status as DashboardStatsDto['recentInquiries'][0]['status'],
       createdAt: i.createdAt.toISOString(),
-      customerName: i.customer.name,
+      customerName: i.name || i.customer?.name || 'Inquirer',
     })),
   };
 }

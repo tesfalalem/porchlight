@@ -99,8 +99,7 @@ export function Navbar() {
         )}
       >
         {/* Drawer header */}
-        <div className="flex h-14 items-center justify-between border-b border-white/10 px-5">
-          <span className="font-display text-sm font-semibold tracking-[0.18em] text-white">Menu</span>
+        <div className="flex h-14 items-center justify-end border-b border-white/10 px-5">
           <button
             type="button"
             onClick={() => setOpen(false)}

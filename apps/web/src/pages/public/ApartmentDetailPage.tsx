@@ -1,36 +1,33 @@
-import { COMPANY } from '@porchlight/shared';
 import { useQuery } from '@tanstack/react-query';
 import {
   ArrowLeft,
   Bath,
   BedDouble,
-  Building2,
   Check,
-  CheckCircle2,
   ChevronLeft,
   ChevronRight,
   Heart,
   Home,
+  Image as ImageIcon,
   Layers,
   MapPin,
   Maximize2,
-  MessageCircle,
   Play,
   Share2,
   ShieldCheck,
   Sparkles,
-  Tag,
   X,
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { getAmenityIcon } from '../../utils/amenityIcons';
 import { ErrorState } from '../../components/common/ErrorState';
-import { LoadingState } from '../../components/common/LoadingState';
+import { ApartmentDetailSkeleton } from '../../components/apartments/ApartmentDetailSkeleton';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { formatPrice } from '../../utils/format';
 import { fetchApartment } from '../../services/apartmentsApi';
+import { InquiryForm } from '../../components/forms/InquiryForm';
 
 // ── Contained gallery with smooth animated image change ──────────────────────
 function Gallery({ images, name }: { images: { url: string; alt?: string | null; isPrimary?: boolean; sortOrder?: number }[]; name?: string }) {
@@ -39,20 +36,96 @@ function Gallery({ images, name }: { images: { url: string; alt?: string | null;
     [images],
   );
   const [idx, setIdx] = useState(0);
-  const [lightbox, setLightbox] = useState(false);
-  const [lbIdx, setLbIdx] = useState(0);
-  const touchX = useRef<number | null>(null);
+  const [direction, setDirection] = useState<'initial' | 'next' | 'prev'>('initial');
+  const [animKey, setAnimKey] = useState(0);
+  const [isMainLoaded, setIsMainLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const prev = () => setIdx((i) => (i === 0 ? sorted.length - 1 : i - 1));
-  const next = () => setIdx((i) => (i === sorted.length - 1 ? 0 : i + 1));
+  // Lightbox state with smooth closing transition
+  const [lightbox, setLightbox] = useState(false);
+  const [lightboxClosing, setLightboxClosing] = useState(false);
+  const [lbIdx, setLbIdx] = useState(0);
+  const [lbDirection, setLbDirection] = useState<'initial' | 'next' | 'prev'>('initial');
+  const [lbAnimKey, setLbAnimKey] = useState(0);
+  const touchX = useRef<number | null>(null);
+  const lbTouchX = useRef<number | null>(null);
+
+  // IntersectionObserver for gentle scroll-in fade & rise
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const openLightboxAt = (i: number) => {
+    setLbIdx(i);
+    setLbDirection('initial');
+    setLbAnimKey((k) => k + 1);
+    setLightboxClosing(false);
+    setLightbox(true);
+  };
+
+  const closeLightbox = () => {
+    setLightboxClosing(true);
+    setTimeout(() => {
+      setLightbox(false);
+      setLightboxClosing(false);
+    }, 280);
+  };
+
+  const prev = () => {
+    setDirection('prev');
+    setAnimKey((k) => k + 1);
+    setIsMainLoaded(false);
+    setIdx((i) => (i === 0 ? sorted.length - 1 : i - 1));
+  };
+
+  const next = () => {
+    setDirection('next');
+    setAnimKey((k) => k + 1);
+    setIsMainLoaded(false);
+    setIdx((i) => (i === sorted.length - 1 ? 0 : i + 1));
+  };
+
+  const goTo = (targetIdx: number) => {
+    if (targetIdx === idx) return;
+    setDirection(targetIdx > idx ? 'next' : 'prev');
+    setAnimKey((k) => k + 1);
+    setIsMainLoaded(false);
+    setIdx(targetIdx);
+  };
+
+  const lbPrev = () => {
+    setLbDirection('prev');
+    setLbAnimKey((k) => k + 1);
+    setLbIdx((i) => (i === 0 ? sorted.length - 1 : i - 1));
+  };
+
+  const lbNext = () => {
+    setLbDirection('next');
+    setLbAnimKey((k) => k + 1);
+    setLbIdx((i) => (i === sorted.length - 1 ? 0 : i + 1));
+  };
 
   // Keyboard nav for lightbox
   useEffect(() => {
     if (!lightbox) return;
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') setLbIdx((i) => (i === sorted.length - 1 ? 0 : i + 1));
-      if (e.key === 'ArrowLeft') setLbIdx((i) => (i === 0 ? sorted.length - 1 : i - 1));
-      if (e.key === 'Escape') setLightbox(false);
+      if (e.key === 'ArrowRight') lbNext();
+      if (e.key === 'ArrowLeft') lbPrev();
+      if (e.key === 'Escape') closeLightbox();
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
@@ -67,14 +140,32 @@ function Gallery({ images, name }: { images: { url: string; alt?: string | null;
   );
 
   const current = sorted[idx];
+  const animationClass =
+    direction === 'initial'
+      ? 'animate-gallery-initial'
+      : direction === 'next'
+        ? 'animate-gallery-next'
+        : 'animate-gallery-prev';
+
+  const lbAnimationClass =
+    lbDirection === 'initial'
+      ? 'animate-gallery-fade'
+      : lbDirection === 'next'
+        ? 'animate-gallery-next'
+        : 'animate-gallery-prev';
 
   return (
     <>
-      {/* Contained, reduced-size gallery */}
-      <div className="mx-auto max-w-4xl px-4 pt-4 sm:px-6 sm:pt-6">
+      {/* Contained, reduced-size gallery with scroll-in animation */}
+      <div
+        ref={containerRef}
+        className={`mx-auto max-w-4xl px-4 pt-4 sm:px-6 sm:pt-6 transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+          }`}
+      >
         {/* Main viewer with compact dimensions and rounded frame */}
         <div
-          className="relative aspect-[16/10] sm:aspect-[16/9] max-h-[380px] sm:max-h-[440px] w-full overflow-hidden rounded-2xl border border-[#E9E5E0] bg-[#1A1214] shadow-xs"
+          className="group relative aspect-[16/10] sm:aspect-[16/9] max-h-[380px] sm:max-h-[440px] w-full cursor-pointer overflow-hidden rounded-2xl border border-[#E9E5E0] bg-[#1A1214] shadow-xs select-none"
+          onClick={() => openLightboxAt(idx)}
           onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
           onTouchEnd={(e) => {
             if (touchX.current === null) return;
@@ -84,43 +175,70 @@ function Gallery({ images, name }: { images: { url: string; alt?: string | null;
             touchX.current = null;
           }}
         >
+          {/* Skeleton placeholder while main image loads */}
+          {!isMainLoaded && (
+            <div className="absolute inset-0 z-0 flex items-center justify-center bg-[#EFECE8] shimmer-bg">
+              <div className="flex flex-col items-center gap-2 text-slate-400">
+                <ImageIcon className="h-8 w-8 stroke-[1.5] animate-pulse" />
+              </div>
+            </div>
+          )}
+
           <img
-            key={idx}
+            key={`${idx}-${animKey}`}
             src={current.url}
             alt={current.alt ?? name ?? 'Residence photograph'}
-            className="h-full w-full object-cover animate-gallery-fade"
+            onLoad={() => setIsMainLoaded(true)}
+            className={`relative z-1 h-full w-full object-cover transition-transform duration-700 ease-out will-change-transform ${animationClass}`}
           />
 
-          {/* Counter */}
-          <div className="absolute bottom-3 left-3 rounded-md bg-black/60 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-xs">
+          {/* Elegant hover overlay cue to expand */}
+          <div className="absolute inset-0 z-2 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none flex items-end justify-center pb-4 sm:pb-5">
+            <span className="flex items-center gap-1.5 rounded-full bg-black/60 px-3 py-1.5 text-xs font-medium text-white shadow-sm backdrop-blur-md">
+              <Maximize2 className="h-3.5 w-3.5" /> Click to expand
+            </span>
+          </div>
+
+          {/* Counter badge */}
+          <div className="absolute bottom-3 left-3 z-3 rounded-md bg-black/65 px-2.5 py-1 text-[11px] font-medium text-white shadow-xs backdrop-blur-xs">
             {idx + 1} / {sorted.length}
           </div>
 
-          {/* Fullscreen */}
+          {/* Fullscreen button */}
           <button
             type="button"
-            onClick={() => { setLbIdx(idx); setLightbox(true); }}
-            className="absolute bottom-3 right-3 rounded-md bg-black/60 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-xs transition hover:bg-black/80"
+            onClick={(e) => {
+              e.stopPropagation();
+              openLightboxAt(idx);
+            }}
+            className="absolute bottom-3 right-3 z-3 flex items-center gap-1.5 rounded-md bg-black/65 px-2.5 py-1 text-[11px] font-medium text-white shadow-xs backdrop-blur-xs transition hover:bg-black/85"
             aria-label="Open fullscreen gallery"
           >
-            View all {sorted.length} photos
+            <Maximize2 className="h-3 w-3" />
+            <span>View all {sorted.length} photos</span>
           </button>
 
-          {/* Prev/Next — only when multiple images */}
+          {/* Prev/Next arrows — stop propagation so it doesn't open lightbox */}
           {sorted.length > 1 && (
             <>
               <button
                 type="button"
-                onClick={prev}
-                className="absolute left-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-xs transition hover:bg-black/75 hover:scale-105 active:scale-95"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prev();
+                }}
+                className="absolute left-3 top-1/2 z-3 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-black/45 text-white shadow-md backdrop-blur-xs transition-all duration-200 hover:bg-black/80 hover:scale-110 active:scale-95"
                 aria-label="Previous photo"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
               <button
                 type="button"
-                onClick={next}
-                className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-xs transition hover:bg-black/75 hover:scale-105 active:scale-95"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  next();
+                }}
+                className="absolute right-3 top-1/2 z-3 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-black/45 text-white shadow-md backdrop-blur-xs transition-all duration-200 hover:bg-black/80 hover:scale-110 active:scale-95"
                 aria-label="Next photo"
               >
                 <ChevronRight className="h-4 w-4" />
@@ -129,65 +247,99 @@ function Gallery({ images, name }: { images: { url: string; alt?: string | null;
           )}
         </div>
 
-        {/* Thumbnails */}
+        {/* Thumbnails with elegant hover zoom & lift */}
         {sorted.length > 1 && (
           <div className="mt-2.5 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
             {sorted.map((img, i) => (
               <button
                 key={i}
                 type="button"
-                onClick={() => setIdx(i)}
-                className={`h-12 w-16 sm:h-14 sm:w-20 shrink-0 overflow-hidden rounded-lg transition-all duration-200 ${
-                  i === idx
-                    ? 'ring-2 ring-accent ring-offset-2 ring-offset-[#F8F6F2] opacity-100 scale-[1.02]'
-                    : 'opacity-50 hover:opacity-85'
-                }`}
+                onClick={() => goTo(i)}
+                className={`group relative h-12 w-16 sm:h-14 sm:w-20 shrink-0 overflow-hidden rounded-xl transition-all duration-300 hover:-translate-y-0.5 ${i === idx
+                  ? 'ring-2 ring-accent ring-offset-2 ring-offset-[#FAF8F5] opacity-100 shadow-sm scale-[1.02]'
+                  : 'opacity-55 hover:opacity-100'
+                  }`}
                 aria-label={`Photo ${i + 1}`}
               >
-                <img src={img.url} alt="" className="h-full w-full object-cover" loading="lazy" />
+                <img
+                  src={img.url}
+                  alt=""
+                  className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110 will-change-transform"
+                  loading="lazy"
+                />
               </button>
             ))}
           </div>
         )}
       </div>
 
-      {/* Lightbox */}
+      {/* Lightbox with smooth entry and exit transitions */}
       {lightbox && (
-        <div className="fixed inset-0 z-[60] flex flex-col bg-black/95 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Fullscreen gallery">
-          <div className="flex h-12 shrink-0 items-center justify-between px-4">
-            <span className="text-[13px] font-medium text-white/60">
-              {lbIdx + 1} / {sorted.length}
+        <div
+          className={`fixed inset-0 z-[60] flex flex-col bg-black/95 backdrop-blur-md transition-opacity duration-300 ease-out animate-lightbox-backdrop ${lightboxClosing ? 'opacity-0' : 'opacity-100'
+            }`}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Fullscreen gallery"
+          onClick={closeLightbox}
+        >
+          {/* Top bar */}
+          <div
+            className="flex h-14 shrink-0 items-center justify-between px-4 sm:px-6 z-10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span className="text-[13px] font-medium tracking-wide text-white/70">
+              {lbIdx + 1} of {sorted.length}
             </span>
             <button
               type="button"
-              onClick={() => setLightbox(false)}
-              className="flex h-8 w-8 items-center justify-center rounded text-white/60 hover:text-white"
+              onClick={closeLightbox}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/80 transition-all hover:bg-white/20 hover:text-white hover:scale-105 active:scale-95"
               aria-label="Close gallery"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
-          <div className="relative flex flex-1 items-center justify-center p-4">
-            <img
-              key={lbIdx}
-              src={sorted[lbIdx].url}
-              alt=""
-              className="max-h-[85vh] max-w-full rounded-lg object-contain animate-gallery-fade"
-            />
+
+          {/* Main viewer inside lightbox */}
+          <div
+            className="relative flex flex-1 items-center justify-center p-4 sm:p-6"
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={(e) => { lbTouchX.current = e.touches[0].clientX; }}
+            onTouchEnd={(e) => {
+              if (lbTouchX.current === null) return;
+              const dx = e.changedTouches[0].clientX - lbTouchX.current;
+              if (dx < -40) lbNext();
+              else if (dx > 40) lbPrev();
+              lbTouchX.current = null;
+            }}
+          >
+            <div
+              className={`relative flex items-center justify-center transition-all duration-300 animate-lightbox-content ${lightboxClosing ? 'scale-95 opacity-0' : 'scale-100 opacity-100'
+                }`}
+            >
+              <img
+                key={`lb-${lbIdx}-${lbAnimKey}`}
+                src={sorted[lbIdx].url}
+                alt=""
+                className={`max-h-[80vh] max-w-full rounded-xl object-contain shadow-2xl ${lbAnimationClass}`}
+              />
+            </div>
+
             {sorted.length > 1 && (
               <>
                 <button
                   type="button"
-                  onClick={() => setLbIdx((i) => (i === 0 ? sorted.length - 1 : i - 1))}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+                  onClick={lbPrev}
+                  className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white/90 backdrop-blur-xs transition-all duration-200 hover:bg-white/25 hover:text-white hover:scale-110 active:scale-95 shadow-lg"
                   aria-label="Previous photo"
                 >
                   <ChevronLeft className="h-6 w-6" />
                 </button>
                 <button
                   type="button"
-                  onClick={() => setLbIdx((i) => (i === sorted.length - 1 ? 0 : i + 1))}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
+                  onClick={lbNext}
+                  className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white/90 backdrop-blur-xs transition-all duration-200 hover:bg-white/25 hover:text-white hover:scale-110 active:scale-95 shadow-lg"
                   aria-label="Next photo"
                 >
                   <ChevronRight className="h-6 w-6" />
@@ -195,17 +347,32 @@ function Gallery({ images, name }: { images: { url: string; alt?: string | null;
               </>
             )}
           </div>
-          <div className="flex h-16 shrink-0 items-center gap-1.5 overflow-x-auto px-4 no-scrollbar">
+
+          {/* Bottom thumbnail strip inside lightbox */}
+          <div
+            className="flex h-20 shrink-0 items-center justify-center gap-2 overflow-x-auto px-4 pb-3 no-scrollbar z-10"
+            onClick={(e) => e.stopPropagation()}
+          >
             {sorted.map((img, i) => (
               <button
                 key={i}
                 type="button"
-                onClick={() => setLbIdx(i)}
-                className={`h-11 w-16 shrink-0 overflow-hidden rounded transition ${
-                  i === lbIdx ? 'ring-2 ring-accent' : 'opacity-40 hover:opacity-70'
-                }`}
+                onClick={() => {
+                  setLbDirection(i > lbIdx ? 'next' : 'prev');
+                  setLbAnimKey((k) => k + 1);
+                  setLbIdx(i);
+                }}
+                className={`group relative h-12 w-16 sm:h-14 sm:w-20 shrink-0 overflow-hidden rounded-lg transition-all duration-300 ${i === lbIdx
+                  ? 'ring-2 ring-accent scale-105 opacity-100'
+                  : 'opacity-40 hover:opacity-80 hover:scale-100'
+                  }`}
               >
-                <img src={img.url} alt="" className="h-full w-full object-cover" loading="lazy" />
+                <img
+                  src={img.url}
+                  alt=""
+                  className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                  loading="lazy"
+                />
               </button>
             ))}
           </div>
@@ -264,7 +431,7 @@ export function ApartmentDetailPage() {
       : 'Residence — Porchlight',
   );
 
-  if (query.isLoading) return <LoadingState label="Loading residence…" />;
+  if (query.isLoading) return <ApartmentDetailSkeleton backTo={backTo} backLabel={backLabel} />;
   if (query.isError || !apt) {
     return (
       <div className="mx-auto max-w-xl px-5 py-24 text-center">
@@ -276,10 +443,8 @@ export function ApartmentDetailPage() {
     );
   }
 
-  const cleanPhone = COMPANY.whatsapp.replace(/\D/g, '');
-
   return (
-    <div className="bg-[#FAF8F5] pb-24 lg:pb-16 min-h-screen">
+    <div className="bg-[#FAF8F5] pb-16 min-h-screen">
       {/* ── Breadcrumb ── */}
       <div className="border-b border-[#E9E5E0] bg-white">
         <div className="mx-auto flex max-w-4xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
@@ -329,11 +494,10 @@ export function ApartmentDetailPage() {
                   type="button"
                   onClick={handleToggleSave}
                   aria-label={isSaved ? 'Remove from saved' : 'Save this residence'}
-                  className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition active:scale-95 ${
-                    isSaved
-                      ? 'border-red-200 bg-red-50 text-red-600'
-                      : 'border-[#E9E5E0] bg-white text-slate-600 hover:bg-[#F3F0EC]'
-                  }`}
+                  className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition active:scale-95 ${isSaved
+                    ? 'border-red-200 bg-red-50 text-red-600'
+                    : 'border-[#E9E5E0] bg-white text-slate-600 hover:bg-[#F3F0EC]'
+                    }`}
                 >
                   <Heart className={`h-3.5 w-3.5 ${isSaved ? 'fill-red-500 text-red-500' : ''}`} />
                   <span>{isSaved ? 'Saved' : 'Save'}</span>
@@ -488,79 +652,28 @@ export function ApartmentDetailPage() {
             </div>
           )}
 
-          {/* ── 5. SPECIFICATIONS CARD ── */}
-          <div>
-            <div className="mb-4">
-              <h2 className="font-display text-xl sm:text-2xl font-bold text-navy-950">Specifications</h2>
-              <p className="mt-0.5 text-xs text-slate-500">Property details, leasing terms, and architectural specs</p>
-            </div>
-
-            <div className="rounded-2xl border border-[#E9E5E0] bg-white p-4 sm:p-6 shadow-xs">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                {[
-                  { label: 'Unit Number', value: `Unit ${apt.number}`, Icon: Tag },
-                  { label: 'Residence Type', value: apt.type, Icon: Building2 },
-                  { label: 'Floor Level', value: apt.floor != null ? `Floor ${apt.floor}` : '—', Icon: Layers },
-                  { label: 'Furnishing', value: 'Fully furnished, move-in ready', Icon: Sparkles },
-                  { label: 'Management', value: 'Direct Porchlight on-site management', Icon: ShieldCheck },
-                  { label: 'Lease Documentation', value: 'Corporate & private leases with VAT', Icon: CheckCircle2 },
-                ].map(({ label, value, Icon }) => (
-                  <div
-                    key={label}
-                    className="flex items-center gap-3.5 rounded-xl border border-[#F3F0EC] bg-[#FAF8F5]/60 p-4 transition-all duration-200 hover:bg-white hover:border-accent/30 hover:shadow-2xs"
-                  >
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#E9E5E0]/60 text-navy-950">
-                      <Icon className="h-4 w-4 text-accent" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-slate-400">{label}</p>
-                      <p className="text-[13px] sm:text-[14px] font-semibold text-navy-950 truncate">{value}</p>
-                    </div>
-                  </div>
-                ))}
+          {/* ── 5. CONTACT / INQUIRY FORM ── */}
+          <div id="inquire-form" className="rounded-2xl border border-[#E9E5E0] bg-white p-6 sm:p-8 shadow-xs scroll-mt-24">
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="h-2 w-2 rounded-full bg-accent" />
+                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-accent">Direct Contact</p>
               </div>
+              <h2 className="font-display text-xl sm:text-2xl font-bold text-navy-950">
+                Inquire About Unit {apt.number}
+              </h2>
+              <p className="mt-1 text-xs sm:text-[13px] text-slate-500">
+                Interested in this residence? Submit your details below and our property management team will respond directly.
+              </p>
             </div>
+
+            <InquiryForm
+              defaultApartmentId={apt.id}
+              apartmentName={apt.name}
+              apartmentNumber={apt.number}
+            />
           </div>
 
-        </div>
-      </div>
-
-      {/* ── Mobile sticky bottom bar ── */}
-      <div className="fixed bottom-0 inset-x-0 z-40 border-t border-[#E9E5E0] bg-white px-5 py-3 lg:hidden shadow-lg">
-        <div className="mx-auto flex max-w-lg items-center justify-between gap-3">
-          <div>
-            <p className="text-[11px] font-medium text-slate-400">Monthly rent</p>
-            <p className="font-display text-lg font-semibold text-navy-950">
-              {formatPrice(apt.price)} <span className="text-[12px] font-normal text-slate-500">ETB/mo</span>
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <a
-              href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(
-                apt.availabilityStatus === 'Occupied'
-                  ? `Hello, I'd like to register interest for Unit ${apt.number} at Porchlight.`
-                  : `Hello, I'd like to enquire about Unit ${apt.number} — is it available?`
-              )}`}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Contact via WhatsApp"
-              className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#25D366] text-white"
-            >
-              <MessageCircle className="h-4 w-4" />
-            </a>
-            <a
-              href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(
-                apt.availabilityStatus === 'Occupied'
-                  ? `Hello, I'd like to register interest for Unit ${apt.number} at Porchlight.`
-                  : `Hello, I'd like to enquire about Unit ${apt.number} — is it available?`
-              )}`}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-lg bg-accent px-4 py-2.5 text-[13px] font-semibold text-white transition hover:bg-accent-hover active:scale-[0.98]"
-            >
-              {apt.availabilityStatus === 'Occupied' ? 'Register Interest' : 'Enquire Now'}
-            </a>
-          </div>
         </div>
       </div>
     </div>

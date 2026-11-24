@@ -80,13 +80,16 @@ export function mapCustomer(c: Customer): CustomerDto {
 }
 
 type InquiryWithRelations = Inquiry & {
-  customer: Customer;
+  customer?: Customer | null;
   apartment?: Pick<Apartment, 'id' | 'name' | 'number'> | null;
 };
 
 export function mapInquiry(inquiry: InquiryWithRelations): InquiryDto {
   return {
     id: inquiry.id,
+    name: inquiry.name || inquiry.customer?.name || '',
+    email: inquiry.email || inquiry.customer?.email || '',
+    phone: inquiry.phone || inquiry.customer?.phone || '',
     subject: inquiry.subject,
     message: inquiry.message,
     status: inquiry.status as InquiryStatus,
@@ -95,7 +98,7 @@ export function mapInquiry(inquiry: InquiryWithRelations): InquiryDto {
     customerId: inquiry.customerId,
     createdAt: inquiry.createdAt.toISOString(),
     updatedAt: inquiry.updatedAt.toISOString(),
-    customer: mapCustomer(inquiry.customer),
+    customer: inquiry.customer ? mapCustomer(inquiry.customer) : null,
     apartment: inquiry.apartment
       ? {
           id: inquiry.apartment.id,

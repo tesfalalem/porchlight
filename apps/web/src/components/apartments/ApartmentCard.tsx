@@ -1,5 +1,5 @@
 import type { ApartmentListItemDto } from '@porchlight/shared';
-import { Bath, BedDouble, Maximize2 } from 'lucide-react';
+import { Bath, BedDouble, Layers, Maximize2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { formatPrice } from '../../utils/format';
 
@@ -8,33 +8,43 @@ function primaryImage(apartment: ApartmentListItemDto): string {
   return primary?.url ?? '';
 }
 
-function statusConfig(status: string): { label: string; color: string; dot: string; bg: string } {
+function statusConfig(status: string): {
+  label: string;
+  color: string;
+  dot: string;
+  ring: string;
+  bg: string;
+} {
   if (status === 'Available')
     return {
       label: 'Available',
-      color: 'text-emerald-700',
+      color: 'text-emerald-800',
       dot: 'bg-emerald-500',
-      bg: 'bg-white/95 border-emerald-200/80',
+      ring: 'ring-2 ring-emerald-500/25',
+      bg: 'bg-white/95 border-emerald-200/90 shadow-xs',
     };
   if (status === 'Occupied')
     return {
       label: 'Occupied',
-      color: 'text-slate-600',
+      color: 'text-slate-700',
       dot: 'bg-slate-400',
-      bg: 'bg-white/95 border-slate-200/80',
+      ring: 'ring-2 ring-slate-400/25',
+      bg: 'bg-white/95 border-slate-200/90 shadow-xs',
     };
   if (status === 'Upcoming' || status === 'Coming Soon')
     return {
       label: 'Coming Soon',
-      color: 'text-amber-700',
+      color: 'text-amber-800',
       dot: 'bg-amber-500',
-      bg: 'bg-white/95 border-amber-200/80',
+      ring: 'ring-2 ring-amber-500/25',
+      bg: 'bg-white/95 border-amber-200/90 shadow-xs',
     };
   return {
     label: status,
-    color: 'text-slate-600',
+    color: 'text-slate-700',
     dot: 'bg-slate-400',
-    bg: 'bg-white/95 border-slate-200/80',
+    ring: 'ring-2 ring-slate-400/25',
+    bg: 'bg-white/95 border-slate-200/90 shadow-xs',
   };
 }
 
@@ -46,7 +56,7 @@ export function ApartmentCard({
   linkState?: { backLabel?: string; backTo?: string };
 }) {
   const imgSrc = primaryImage(apartment);
-  const { label, color, dot, bg } = statusConfig(apartment.availabilityStatus);
+  const { label, color, dot, ring, bg } = statusConfig(apartment.availabilityStatus);
 
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-xl border border-[#E9E5E0] bg-white transition-all duration-300 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-md">
@@ -72,20 +82,23 @@ export function ApartmentCard({
         )}
 
         {/* Status Pill Badge (Top Left Overlay) */}
-        <div className="absolute top-2 left-2 z-10">
+        <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-10">
           <span
-            className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold backdrop-blur-xs shadow-2xs ${bg} ${color}`}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 sm:px-3 sm:py-1 text-xs sm:text-[13px] font-semibold backdrop-blur-md transition-all ${bg} ${color}`}
           >
-            <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${dot}`} />
-            {label}
+            <span className={`h-2 w-2 shrink-0 rounded-full ${dot} ${ring}`} />
+            <span>{label}</span>
           </span>
         </div>
 
-        {/* Floor Badge (Bottom Right Overlay): Floor - [Actual Floor Number] */}
+        {/* Floor Badge (Bottom Right Overlay) */}
         {apartment.floor != null && (
-          <span className="absolute bottom-2 right-2 rounded bg-black/65 px-2 py-0.5 text-[10px] font-medium text-white backdrop-blur-xs shadow-xs">
-            Floor - {apartment.floor}
-          </span>
+          <div className="absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 z-10">
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-black/75 px-2.5 py-1 sm:px-3 sm:py-1 text-xs sm:text-[13px] font-medium text-white shadow-sm backdrop-blur-md">
+              <Layers className="h-3.5 w-3.5 text-white/80 shrink-0" aria-hidden="true" />
+              <span>{apartment.floor === 0 ? 'Ground Floor' : `Floor ${apartment.floor}`}</span>
+            </span>
+          </div>
         )}
       </Link>
 

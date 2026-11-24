@@ -55,21 +55,42 @@ export interface CustomerDto {
 
 export interface InquiryDto {
   id: string;
+  name: string;
+  email: string;
+  phone: string;
   subject: string;
   message: string;
   status: InquiryStatus;
   internalNotes: string | null;
   apartmentId: string | null;
-  customerId: string;
+  customerId: string | null;
   createdAt: string;
   updatedAt: string;
-  customer?: CustomerDto;
+  customer?: CustomerDto | null;
   apartment?: Pick<ApartmentListItemDto, 'id' | 'name' | 'number'> | null;
 }
 
 export interface AuthLoginResponse {
   token: string;
   admin: { id: string; email: string; name: string };
+}
+
+export interface AdminProfileDto {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UpdateProfilePayload {
+  name?: string;
+  email?: string;
+}
+
+export interface UpdatePasswordPayload {
+  currentPassword: string;
+  newPassword: string;
 }
 
 export interface ApiErrorBody {

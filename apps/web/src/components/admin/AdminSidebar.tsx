@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Building2, LayoutDashboard, LogOut, MessageSquare, Users } from 'lucide-react';
+import { Building2, LayoutDashboard, LogOut, MessageSquare, Settings, Users } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -8,6 +8,7 @@ const links = [
   { to: '/admin/apartments', label: 'Apartments', icon: Building2 },
   { to: '/admin/customers', label: 'Customers', icon: Users },
   { to: '/admin/inquiries', label: 'Inquiries', icon: MessageSquare },
+  { to: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
 export function AdminSidebar({ mobileOpen, onClose }: { mobileOpen?: boolean; onClose?: () => void }) {

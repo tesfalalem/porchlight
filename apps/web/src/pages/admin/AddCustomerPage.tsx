@@ -23,7 +23,6 @@ import { StatusBadge } from '../../components/common/StatusBadge';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { createCustomer } from '../../services/customersApi';
 import { fetchApartments } from '../../services/apartmentsApi';
-import { createInquiry } from '../../services/inquiriesApi';
 import { formatPrice } from '../../utils/format';
 import { getApiErrorMessage } from '../../lib/apiClient';
 
@@ -251,23 +250,6 @@ export function AddCustomerPage() {
         phone: phone.trim(),
         notes: finalNotes || undefined,
       });
-
-      // If an apartment is linked, also create an inquiry/booking record
-      if (apartmentId) {
-        await createInquiry({
-          name: name.trim(),
-          email: email.trim().toLowerCase(),
-          phone: phone.trim(),
-          apartmentId,
-          subject:
-            stage === 'active'
-              ? `Active Tenancy — Unit ${selectedApartment?.number ?? ''}`
-              : `Customer Registration — Unit ${selectedApartment?.number ?? ''}`,
-          message:
-            notes.trim() ||
-            `Registered as ${stageLabel} by admin management.`,
-        });
-      }
 
       return customer;
     },
