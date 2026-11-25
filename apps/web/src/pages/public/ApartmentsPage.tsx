@@ -89,8 +89,8 @@ export function ApartmentsPage() {
     <div className="min-h-screen bg-[#F8F6F2]">
 
       {/* ── Page header ── */}
-      <div className="border-b border-[#E9E5E0] bg-white px-5 py-6 sm:px-8 sm:py-10">
-        <div className="mx-auto max-w-6xl">
+      <div className="border-b border-[#E9E5E0] bg-white px-5 py-6 sm:px-8 sm:py-10 lg:px-10 xl:px-12">
+        <div className="mx-auto max-w-6xl lg:max-w-7xl xl:max-w-[1400px]">
           <p className="kicker-accent mb-1.5 text-[10px] sm:text-xs">Bole, Addis Ababa</p>
           <h1 className="font-display text-2xl font-semibold tracking-tight text-navy-950 sm:text-4xl">
             Residences in Bole
@@ -101,7 +101,7 @@ export function ApartmentsPage() {
         </div>
       </div>
 
-      <main className="mx-auto max-w-6xl px-5 py-6 sm:px-8 sm:py-8">
+      <main className="mx-auto max-w-6xl lg:max-w-7xl xl:max-w-[1400px] px-5 py-6 sm:px-8 sm:py-8 lg:px-10 xl:px-12">
 
         {/* ── Filter bar ── */}
         <div className="mb-8 space-y-4">
@@ -231,7 +231,7 @@ export function ApartmentsPage() {
 
         {/* ── Listings grid ── */}
         {apartmentsQuery.isLoading ? (
-          <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 lg:gap-6 xl:gap-7">
             <SkeletonCard /><SkeletonCard /><SkeletonCard />
           </div>
         ) : apartmentsQuery.isError ? (
@@ -256,7 +256,7 @@ export function ApartmentsPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 lg:gap-6 xl:gap-7">
             {filtered.map((apt) => (
               <ApartmentCard
                 key={apt.id}

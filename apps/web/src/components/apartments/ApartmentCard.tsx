@@ -50,8 +50,8 @@ export function ApartmentCard({
       </Link>
 
       {/* ── Info Body ── */}
-      <div className="flex flex-1 flex-col justify-between p-2.5 sm:p-3">
-        <div className="space-y-1.5">
+      <div className="flex flex-1 flex-col justify-between p-2.5 sm:p-3 lg:p-3.5">
+        <div className="space-y-1.5 lg:space-y-2">
           {/* Price Row: Full rental amount + /month */}
           <div className="flex items-baseline flex-wrap gap-x-1 leading-none">
             <span className="font-display text-[12.5px] sm:text-base font-bold text-navy-950 leading-tight">
@@ -63,7 +63,7 @@ export function ApartmentCard({
           </div>
 
           {/* Desktop-only Apartment Name (Hidden on Mobile) */}
-          <h3 className="hidden sm:block font-display text-[14px] font-semibold text-navy-950 truncate leading-snug group-hover:text-accent transition-colors">
+          <h3 className="hidden sm:block font-display text-[14px] lg:text-[15px] font-semibold text-navy-950 truncate leading-snug group-hover:text-accent transition-colors">
             <Link to={`/apartments/${apartment.id}`} state={linkState} className="hover:underline">
               {apartment.name}
             </Link>
@@ -94,7 +94,7 @@ export function ApartmentCard({
           </div>
 
           {/* Desktop Specs Row (sm+) */}
-          <div className="hidden sm:flex items-center gap-2 border-t border-[#F3F0EC] pt-2 text-[11px] text-slate-500">
+          <div className="hidden sm:flex items-center gap-2 lg:gap-2.5 border-t border-[#F3F0EC] pt-2 lg:pt-2.5 text-[11px] lg:text-[11.5px] text-slate-500">
             <span className="flex items-center gap-1 font-medium">
               <BedDouble className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden="true" />
               <span>{apartment.bedrooms} Bedroom</span>
@@ -123,11 +123,11 @@ export function ApartmentCard({
         </div>
 
         {/* View Details Button */}
-        <div className="mt-2.5 sm:mt-3">
+        <div className="mt-2.5 sm:mt-3 lg:mt-3.5">
           <Link
             to={`/apartments/${apartment.id}`}
             state={linkState}
-            className="inline-flex w-full items-center justify-center rounded-lg border border-[#E9E5E0] bg-white py-1.5 text-[11px] sm:text-[13px] font-semibold text-navy-950 transition-colors hover:border-accent hover:bg-accent/5 hover:text-accent"
+            className="inline-flex w-full items-center justify-center rounded-lg border border-[#E9E5E0] bg-white py-1.5 lg:py-2 text-[11px] sm:text-[13px] font-semibold text-navy-950 transition-colors hover:border-accent hover:bg-accent/5 hover:text-accent"
           >
             View Details
           </Link>
