@@ -1,4 +1,3 @@
-import { AVAILABILITY_STATUSES } from '@porchlight/shared';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -16,19 +15,17 @@ export function AdminApartmentsPage() {
   useDocumentTitle('Apartments');
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
-  const [availabilityFilter, setAvailabilityFilter] = useState('');
   const [page, setPage] = useState(1);
 
   const apartmentsQuery = useQuery({
-    queryKey: ['admin', 'apartments', search, availabilityFilter],
+    queryKey: ['admin', 'apartments', search],
     queryFn: () => fetchApartments({
       includeArchived: false,
       search: search || undefined,
-      availabilityStatus: availabilityFilter || undefined,
     }),
   });
 
-  useEffect(() => { setPage(1); }, [search, availabilityFilter]);
+  useEffect(() => { setPage(1); }, [search]);
 
   const { slice: rows, pageCount } = useMemo(() => {
     return paginate(apartmentsQuery.data ?? [], page, 10);
@@ -61,17 +58,6 @@ export function AdminApartmentsPage() {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full max-w-sm rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-navy-900 focus:outline-none focus:ring-2 focus:ring-navy-900/10"
         />
-        <select
-          value={availabilityFilter}
-          onChange={(e) => setAvailabilityFilter(e.target.value)}
-          className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm focus:border-navy-900 focus:outline-none"
-          aria-label="Filter by availability"
-        >
-          <option value="">All availability</option>
-          {AVAILABILITY_STATUSES.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
       </div>
 
       {/* Table */}
@@ -80,7 +66,7 @@ export function AdminApartmentsPage() {
         {apartmentsQuery.isError ? <ErrorState onRetry={() => void apartmentsQuery.refetch()} /> : null}
         {rows.length ? (
           <>
-            <DataTable columns={['Unit', 'Type', 'Price', 'Status', 'Date']}>
+            <DataTable columns={['Unit', 'Type', 'Price', 'Availability', 'Date']}>
               {rows.map((a) => (
                 <tr
                   key={a.id}

@@ -9,30 +9,30 @@ export function ContactPage() {
   return (
     <div className="bg-white">
       {/* ── Header ── */}
-      <div className="border-b border-[#E9E5E0] px-5 py-10 sm:px-8 sm:py-14">
+      <div className="border-b border-[#E9E5E0] px-5 py-8 sm:px-8 sm:py-14">
         <div className="mx-auto max-w-6xl">
-          <p className="kicker-accent mb-2">Get in Touch</p>
-          <h1 className="font-display text-4xl font-semibold tracking-tight text-navy-950 sm:text-5xl">
+          <p className="kicker-accent mb-1.5 text-[10px] sm:text-xs">Get in Touch</p>
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-navy-950 sm:text-5xl">
             Contact Us
           </h1>
-          <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-slate-500">
+          <p className="mt-2.5 max-w-xl text-[13px] sm:text-[15px] leading-relaxed text-slate-500">
             Questions about availability, pricing, or viewings? Our team responds within one business day.
           </p>
         </div>
       </div>
 
       {/* ── Body ── */}
-      <div className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
-        <div className="grid gap-10 lg:grid-cols-12">
+      <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-16">
+        <div className="grid gap-8 lg:grid-cols-12">
 
           {/* Form */}
           <div className="lg:col-span-7">
-            <h2 className="font-display text-2xl font-semibold text-navy-950 mb-6">Send a message</h2>
+            <h2 className="font-display text-lg sm:text-2xl font-semibold text-navy-950 mb-4 sm:mb-6">Send a message</h2>
             <InquiryForm />
           </div>
 
           {/* Contact details + map */}
-          <div className="space-y-6 lg:col-span-5">
+          <div className="space-y-5 sm:space-y-6 lg:col-span-5">
             {/* Contact list */}
             <div className="divide-y divide-[#E9E5E0] border border-[#E9E5E0] rounded-xl overflow-hidden">
               {[
@@ -42,17 +42,17 @@ export function ContactPage() {
                 { icon: MessageCircle,label: 'WhatsApp',      value: 'Chat with us',   href: `https://wa.me/${COMPANY.whatsapp.replace(/\D/g, '')}`,             external: true  },
                 { icon: Clock,        label: 'Working Hours', value: COMPANY.workingHours, href: undefined,                                                     external: false },
               ].map(({ icon: Icon, label, value, href, external }) => (
-                <div key={label} className="flex items-start gap-3.5 bg-white px-4 py-3.5">
-                  <Icon className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                <div key={label} className="flex items-start gap-3 sm:gap-3.5 bg-white px-3.5 py-3 sm:px-4 sm:py-3.5">
+                  <Icon className="mt-0.5 h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-accent" />
                   <div className="min-w-0">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">{label}</p>
+                    <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">{label}</p>
                     {href ? (
                       <a href={href} target={external ? '_blank' : undefined} rel={external ? 'noreferrer' : undefined}
-                        className="mt-0.5 block text-[13px] font-medium text-navy-950 transition hover:text-accent truncate">
+                        className="mt-0.5 block text-xs sm:text-[13px] font-medium text-navy-950 transition hover:text-accent truncate">
                         {value}
                       </a>
                     ) : (
-                      <p className="mt-0.5 text-[13px] font-medium text-slate-600">{value}</p>
+                      <p className="mt-0.5 text-xs sm:text-[13px] font-medium text-slate-600">{value}</p>
                     )}
                   </div>
                 </div>

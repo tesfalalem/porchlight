@@ -15,7 +15,7 @@ const schema = z.object({
   bedrooms: z.coerce.number().min(0),
   size: z.coerce.number().optional().nullable(),
   price: z.coerce.number().min(0),
-  availabilityStatus: z.enum(['Available', 'Occupied', 'Upcoming', 'Coming Soon']),
+  availabilityStatus: z.string().optional(),
   availableFrom: z.string().optional(),
   amenityIds: z.array(z.string()).optional(),
   imageUrls: z.string(),
@@ -59,7 +59,7 @@ export function ApartmentFormModal({
           bedrooms: initial.bedrooms,
           size: initial.size,
           price: initial.price,
-          availabilityStatus: initial.availabilityStatus,
+          availabilityStatus: initial.availabilityStatus ?? 'Available',
           availableFrom: initial.availableFrom?.slice(0, 10) ?? '',
           amenityIds: [],
           imageUrls: initial.images.map((i) => i.url).join('\n'),
@@ -172,18 +172,10 @@ export function ApartmentFormModal({
             <input type="number" {...register('size')} className="mt-1 w-full rounded-lg border px-3 py-2" />
           </label>
           <label className="block">
-            Availability
-            <select {...register('availabilityStatus')} className="mt-1 w-full rounded-lg border px-3 py-2">
-              <option value="Available">Available Now</option>
-              <option value="Upcoming">Upcoming (set date below)</option>
-              <option value="Occupied">Currently Occupied</option>
-            </select>
+            Available From
+            <input type="date" {...register('availableFrom')} className="mt-1 w-full rounded-lg border px-3 py-2" />
           </label>
         </div>
-        <label className="block">
-          Available from
-          <input type="date" {...register('availableFrom')} className="mt-1 w-full rounded-lg border px-3 py-2" />
-        </label>
 
         {/* Images section */}
         <div className="space-y-2">

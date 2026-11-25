@@ -6,7 +6,6 @@ import {
   Calendar,
   Check,
   CheckCircle2,
-  Clock,
   ImagePlus,
   Layers,
   MapPin,
@@ -19,7 +18,6 @@ import {
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import type { AvailabilityStatus } from '@porchlight/shared';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { createApartment } from '../../services/apartmentsApi';
 import { fetchAmenities } from '../../services/amenitiesApi';
@@ -72,8 +70,9 @@ export function AddApartmentPage() {
   const [description, setDescription] = useState(
     'A beautifully furnished modern residence featuring open living spaces, high-end kitchen appliances, and 24/7 backup power located in central Bole.',
   );
-  const [availabilityStatus, setAvailabilityStatus] = useState<AvailabilityStatus>('Available');
-  const [availableFrom, setAvailableFrom] = useState('');
+  const [availableFrom, setAvailableFrom] = useState(
+    new Date().toISOString().slice(0, 10),
+  );
 
   // Images state — starts empty; cover photo is set from uploaded photos
   const [images, setImages] = useState<ImageItem[]>([]);
@@ -179,8 +178,7 @@ export function AddApartmentPage() {
         bathrooms: Number(bathrooms),
         size: size ? Number(size) : null,
         price: parsedPrice,
-        availabilityStatus,
-        availableFrom: availabilityStatus === 'Upcoming' && availableFrom ? availableFrom : null,
+        availableFrom: availableFrom || new Date().toISOString().slice(0, 10),
         amenityIds: (amenitiesQuery.data ?? []).map((a) => a.id),
         images: images.map((img, idx) => ({
           url: img.url,
@@ -517,80 +515,25 @@ export function AddApartmentPage() {
                 </div>
               </div>
 
-              {/* Status Visual Selection Cards */}
+              {/* Available From Date */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                  Current Availability
+                  Available From Date <span className="text-red-500">*</span>
                 </label>
-                <div className="mt-2 grid gap-3 sm:grid-cols-3">
-                  {[
-                    {
-                      key: 'Available',
-                      title: 'Available Now',
-                      icon: CheckCircle2,
-                      activeCls: 'border-emerald-500 bg-emerald-50/50 text-emerald-950 ring-2 ring-emerald-500/20',
-                      badgeCls: 'bg-emerald-100 text-emerald-700',
-                    },
-                    {
-                      key: 'Upcoming',
-                      title: 'Upcoming',
-                      icon: Clock,
-                      activeCls: 'border-amber-500 bg-amber-50/50 text-amber-950 ring-2 ring-amber-500/20',
-                      badgeCls: 'bg-amber-100 text-amber-700',
-                    },
-                    {
-                      key: 'Occupied',
-                      title: 'Occupied',
-                      icon: Building2,
-                      activeCls: 'border-accent bg-accent/5 text-navy-950 ring-2 ring-accent/20',
-                      badgeCls: 'bg-accent/10 text-accent',
-                    },
-                  ].map((s) => {
-                    const Icon = s.icon;
-                    const isSelected = availabilityStatus === s.key;
-                    return (
-                      <button
-                        key={s.key}
-                        type="button"
-                        onClick={() => setAvailabilityStatus(s.key as AvailabilityStatus)}
-                        className={`flex flex-col items-start rounded-xl border p-4 text-left transition ${
-                          isSelected
-                            ? s.activeCls
-                            : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/80'
-                        }`}
-                      >
-                        <div className="flex w-full items-center justify-between">
-                          <Icon className={`h-4 w-4 ${isSelected ? 'text-accent' : 'text-slate-400'}`} />
-                          <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${s.badgeCls}`}>
-                            {s.key}
-                          </span>
-                        </div>
-                        <p className="mt-2 text-sm font-bold">{s.title}</p>
-                      </button>
-                    );
-                  })}
+                <p className="mt-1 text-xs text-slate-400">
+                  Date when this residence is ready for occupancy (displayed uniformly across all pages).
+                </p>
+                <div className="relative mt-2 max-w-xs">
+                  <Calendar className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-accent" />
+                  <input
+                    type="date"
+                    required
+                    value={availableFrom}
+                    onChange={(e) => setAvailableFrom(e.target.value)}
+                    className="w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 py-2.5 text-sm font-semibold text-slate-800 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+                  />
                 </div>
               </div>
-
-              {/* Dynamic Available From Field */}
-              {availabilityStatus === 'Upcoming' && (
-                <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-4">
-                  <label className="block">
-                    <span className="text-xs font-bold uppercase tracking-wider text-amber-900">
-                      Available From Date
-                    </span>
-                    <div className="relative mt-1.5 max-w-xs">
-                      <Calendar className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-amber-600" />
-                      <input
-                        type="date"
-                        value={availableFrom}
-                        onChange={(e) => setAvailableFrom(e.target.value)}
-                        className="w-full rounded-xl border border-amber-300 bg-white pl-10 pr-4 py-2.5 text-sm font-semibold text-slate-800 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20"
-                      />
-                    </div>
-                  </label>
-                </div>
-              )}
             </div>
           </section>
 

@@ -507,39 +507,39 @@ export function ApartmentDetailPage() {
 
             {/* Title & Metadata Pills */}
             <div>
-              <h1 className="font-display text-3xl font-bold tracking-tight text-navy-950 sm:text-4xl lg:text-[42px] leading-tight">
+              <h1 className="font-display text-2xl font-bold tracking-tight text-navy-950 sm:text-4xl lg:text-[42px] leading-tight">
                 {apt.name}
               </h1>
-              <div className="mt-2.5 flex flex-wrap items-center gap-2 text-xs sm:text-[13px] text-slate-500">
-                <span className="inline-flex items-center gap-1.5 rounded-md bg-white border border-[#E9E5E0] px-2.5 py-1 font-medium text-slate-700 shadow-2xs">
-                  <Home className="h-3.5 w-3.5 text-slate-400" />
+              <div className="mt-2 sm:mt-2.5 flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-[13px] text-slate-500">
+                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-md bg-white border border-[#E9E5E0] px-2 py-0.5 sm:px-2.5 sm:py-1 font-medium text-slate-700 shadow-2xs">
+                  <Home className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-400" />
                   {apt.type}
                 </span>
                 {apt.floor != null && (
-                  <span className="inline-flex items-center gap-1.5 rounded-md bg-white border border-[#E9E5E0] px-2.5 py-1 font-medium text-slate-700 shadow-2xs">
-                    <Layers className="h-3.5 w-3.5 text-slate-400" />
+                  <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-md bg-white border border-[#E9E5E0] px-2 py-0.5 sm:px-2.5 sm:py-1 font-medium text-slate-700 shadow-2xs">
+                    <Layers className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-slate-400" />
                     Floor {apt.floor}
                   </span>
                 )}
-                <span className="inline-flex items-center gap-1.5 rounded-md bg-white border border-[#E9E5E0] px-2.5 py-1 font-medium text-slate-700 shadow-2xs">
-                  <MapPin className="h-3.5 w-3.5 text-accent" />
+                <span className="inline-flex items-center gap-1 sm:gap-1.5 rounded-md bg-white border border-[#E9E5E0] px-2 py-0.5 sm:px-2.5 sm:py-1 font-medium text-slate-700 shadow-2xs">
+                  <MapPin className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-accent" />
                   {apt.location}
                 </span>
               </div>
             </div>
 
             {/* Price Card */}
-            <div className="rounded-2xl border border-[#E9E5E0] bg-gradient-to-br from-white via-white to-[#FDFBF8] p-5 sm:p-6 shadow-xs">
+            <div className="rounded-2xl border border-[#E9E5E0] bg-gradient-to-br from-white via-white to-[#FDFBF8] p-4 sm:p-6 shadow-xs">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-400">Monthly Rent</p>
+                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-400">Monthly Rent</p>
                 <div className="mt-1 flex items-baseline gap-2">
-                  <span className="font-display text-3xl sm:text-4xl font-extrabold tracking-tight text-navy-950">
+                  <span className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight text-navy-950">
                     {formatPrice(apt.price)}
                   </span>
-                  <span className="text-sm font-medium text-slate-500">ETB / month</span>
+                  <span className="text-xs sm:text-sm font-medium text-slate-500">/ month</span>
                 </div>
-                <p className="mt-1.5 flex items-center gap-1.5 text-xs font-semibold text-[#27866A]">
-                  <ShieldCheck className="h-4 w-4" />
+                <p className="mt-1.5 flex items-center gap-1.5 text-[11px] sm:text-xs font-semibold text-[#27866A]">
+                  <ShieldCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   Zero broker commission · Direct landlord lease
                 </p>
               </div>
@@ -548,69 +548,69 @@ export function ApartmentDetailPage() {
 
           {/* ── 2. KEY STATS TILES (INTERACTIVE CARDS) ── */}
           <div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-              <div className="group rounded-2xl border border-[#E9E5E0] bg-white p-4 sm:p-5 text-center shadow-2xs transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-md">
-                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
-                  <BedDouble className="h-5 w-5" aria-hidden />
+            <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-4">
+              <div className="group rounded-2xl border border-[#E9E5E0] bg-white p-3.5 sm:p-5 text-center shadow-2xs transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-md">
+                <div className="mx-auto flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
+                  <BedDouble className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden />
                 </div>
-                <p className="mt-3 font-display text-2xl sm:text-3xl font-bold text-navy-950">{apt.bedrooms}</p>
-                <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">Bedrooms</p>
+                <p className="mt-2.5 sm:mt-3 font-display text-xl sm:text-3xl font-bold text-navy-950">{apt.bedrooms}</p>
+                <p className="mt-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">Bedrooms</p>
               </div>
 
-              <div className="group rounded-2xl border border-[#E9E5E0] bg-white p-4 sm:p-5 text-center shadow-2xs transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-md">
-                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
-                  <Bath className="h-5 w-5" aria-hidden />
+              <div className="group rounded-2xl border border-[#E9E5E0] bg-white p-3.5 sm:p-5 text-center shadow-2xs transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-md">
+                <div className="mx-auto flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
+                  <Bath className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden />
                 </div>
-                <p className="mt-3 font-display text-2xl sm:text-3xl font-bold text-navy-950">{apt.bathrooms}</p>
-                <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">Bathrooms</p>
+                <p className="mt-2.5 sm:mt-3 font-display text-xl sm:text-3xl font-bold text-navy-950">{apt.bathrooms}</p>
+                <p className="mt-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">Bathrooms</p>
               </div>
 
-              <div className="group rounded-2xl border border-[#E9E5E0] bg-white p-4 sm:p-5 text-center shadow-2xs transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-md">
-                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
-                  <Maximize2 className="h-5 w-5" aria-hidden />
+              <div className="group rounded-2xl border border-[#E9E5E0] bg-white p-3.5 sm:p-5 text-center shadow-2xs transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-md">
+                <div className="mx-auto flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
+                  <Maximize2 className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden />
                 </div>
-                <p className="mt-3 font-display text-2xl sm:text-3xl font-bold text-navy-950">
-                  {apt.size ?? '—'} <span className="text-sm font-normal text-slate-400">m²</span>
+                <p className="mt-2.5 sm:mt-3 font-display text-xl sm:text-3xl font-bold text-navy-950">
+                  {apt.size ?? '—'} <span className="text-xs sm:text-sm font-normal text-slate-400">m²</span>
                 </p>
-                <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">Living Space</p>
+                <p className="mt-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">Living Space</p>
               </div>
 
-              <div className="group rounded-2xl border border-[#E9E5E0] bg-white p-4 sm:p-5 text-center shadow-2xs transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-md">
-                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
-                  <Layers className="h-5 w-5" aria-hidden />
+              <div className="group rounded-2xl border border-[#E9E5E0] bg-white p-3.5 sm:p-5 text-center shadow-2xs transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-md">
+                <div className="mx-auto flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-accent/10 text-accent transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
+                  <Layers className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden />
                 </div>
-                <p className="mt-3 font-display text-2xl sm:text-3xl font-bold text-navy-950">
+                <p className="mt-2.5 sm:mt-3 font-display text-xl sm:text-3xl font-bold text-navy-950">
                   {apt.floor != null ? `Floor ${apt.floor}` : '—'}
                 </p>
-                <p className="mt-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">Building Level</p>
+                <p className="mt-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-400">Building Level</p>
               </div>
             </div>
           </div>
 
           {/* ── 3. ABOUT THIS RESIDENCE ── */}
           {apt.description && (
-            <div className="rounded-2xl border border-[#E9E5E0] bg-gradient-to-br from-white via-[#FCFAF7] to-white p-6 sm:p-8 shadow-xs">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="h-2 w-2 rounded-full bg-accent" />
-                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-accent">Overview</p>
+            <div className="rounded-2xl border border-[#E9E5E0] bg-gradient-to-br from-white via-[#FCFAF7] to-white p-5 sm:p-8 shadow-xs">
+              <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+                <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-accent" />
+                <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.14em] text-accent">Overview</p>
               </div>
-              <h2 className="font-display text-xl sm:text-2xl font-bold text-navy-950">
+              <h2 className="font-display text-lg sm:text-2xl font-bold text-navy-950">
                 About this residence
               </h2>
-              <p className="mt-3 text-[14px] sm:text-[15px] leading-relaxed text-slate-600">
+              <p className="mt-2.5 sm:mt-3 text-[13px] sm:text-[15px] leading-relaxed text-slate-600">
                 {apt.description}
               </p>
-              <div className="mt-6 flex flex-wrap items-center gap-2 pt-4 border-t border-[#E9E5E0]/70 text-xs text-slate-500 font-medium">
-                <span className="inline-flex items-center gap-1 rounded-md bg-white border border-[#E9E5E0] px-2.5 py-1 shadow-2xs">
+              <div className="mt-5 sm:mt-6 flex flex-wrap items-center gap-1.5 sm:gap-2 pt-3.5 sm:pt-4 border-t border-[#E9E5E0]/70 text-[11px] sm:text-xs text-slate-500 font-medium">
+                <span className="inline-flex items-center gap-1 rounded-md bg-white border border-[#E9E5E0] px-2 py-0.5 sm:px-2.5 sm:py-1 shadow-2xs">
                   <Sparkles className="h-3 w-3 text-accent" /> Move-in Ready
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-md bg-white border border-[#E9E5E0] px-2.5 py-1 shadow-2xs">
+                <span className="inline-flex items-center gap-1 rounded-md bg-white border border-[#E9E5E0] px-2 py-0.5 sm:px-2.5 sm:py-1 shadow-2xs">
                   <Check className="h-3 w-3 text-[#27866A]" /> 24/7 Power Backup
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-md bg-white border border-[#E9E5E0] px-2.5 py-1 shadow-2xs">
+                <span className="inline-flex items-center gap-1 rounded-md bg-white border border-[#E9E5E0] px-2 py-0.5 sm:px-2.5 sm:py-1 shadow-2xs">
                   <Check className="h-3 w-3 text-[#27866A]" /> Reserve Water Supply
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-md bg-white border border-[#E9E5E0] px-2.5 py-1 shadow-2xs">
+                <span className="inline-flex items-center gap-1 rounded-md bg-white border border-[#E9E5E0] px-2 py-0.5 sm:px-2.5 sm:py-1 shadow-2xs">
                   <Check className="h-3 w-3 text-[#27866A]" /> Guarded Access
                 </span>
               </div>
@@ -620,29 +620,29 @@ export function ApartmentDetailPage() {
           {/* ── 4. FEATURES & AMENITIES ── */}
           {apt.amenities.length > 0 && (
             <div>
-              <div className="mb-4 flex items-center justify-between">
+              <div className="mb-3.5 sm:mb-4 flex items-center justify-between">
                 <div>
-                  <h2 className="font-display text-xl sm:text-2xl font-bold text-navy-950">Features & Amenities</h2>
-                  <p className="mt-0.5 text-xs text-slate-500">Every amenity provided for your comfort and convenience</p>
+                  <h2 className="font-display text-lg sm:text-2xl font-bold text-navy-950">Features & Amenities</h2>
+                  <p className="mt-0.5 text-[11px] sm:text-xs text-slate-500">Every amenity provided for your comfort and convenience</p>
                 </div>
-                <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
+                <span className="rounded-full bg-accent/10 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[11px] sm:text-xs font-semibold text-accent">
                   {apt.amenities.length} Included
                 </span>
               </div>
 
               {/* 4-column balanced responsive interactive cards (no blank cells) */}
-              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
                 {apt.amenities.map((a) => {
                   const Icon = getAmenityIcon(a.icon ?? a.slug);
                   return (
                     <div
                       key={a.id}
-                      className="group flex items-center gap-3 rounded-xl border border-[#E9E5E0] bg-white p-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-[#FDFBF7] hover:shadow-xs"
+                      className="group flex items-center gap-2.5 sm:gap-3 rounded-xl border border-[#E9E5E0] bg-white p-3 sm:p-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:bg-[#FDFBF7] hover:shadow-xs"
                     >
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/8 text-accent transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
-                        <Icon className="h-4 w-4" aria-hidden />
+                      <div className="flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-lg bg-accent/8 text-accent transition-colors duration-200 group-hover:bg-accent group-hover:text-white">
+                        <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden />
                       </div>
-                      <span className="text-[13px] font-semibold text-navy-950 transition-colors group-hover:text-accent truncate">
+                      <span className="text-xs sm:text-[13px] font-semibold text-navy-950 transition-colors group-hover:text-accent truncate">
                         {a.name}
                       </span>
                     </div>
@@ -653,13 +653,13 @@ export function ApartmentDetailPage() {
           )}
 
           {/* ── 5. CONTACT / INQUIRY FORM ── */}
-          <div id="inquire-form" className="rounded-2xl border border-[#E9E5E0] bg-white p-6 sm:p-8 shadow-xs scroll-mt-24">
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="h-2 w-2 rounded-full bg-accent" />
-                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-accent">Direct Contact</p>
+          <div id="inquire-form" className="rounded-2xl border border-[#E9E5E0] bg-white p-5 sm:p-8 shadow-xs scroll-mt-24">
+            <div className="mb-5 sm:mb-6">
+              <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+                <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-accent" />
+                <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.14em] text-accent">Direct Contact</p>
               </div>
-              <h2 className="font-display text-xl sm:text-2xl font-bold text-navy-950">
+              <h2 className="font-display text-lg sm:text-2xl font-bold text-navy-950">
                 Inquire About Unit {apt.number}
               </h2>
               <p className="mt-1 text-xs sm:text-[13px] text-slate-500">

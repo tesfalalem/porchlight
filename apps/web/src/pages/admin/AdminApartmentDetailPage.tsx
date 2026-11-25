@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { AVAILABILITY_STATUSES } from '@porchlight/shared';
 import {
   ArrowLeft, Bath, BedDouble, Check, ChevronRight, DollarSign,
   ExternalLink, ImagePlus, MapPin, Maximize2,
@@ -10,6 +9,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { LoadingState } from '../../components/common/LoadingState';
 import { ErrorState } from '../../components/common/ErrorState';
+import { OccupancyManager } from '../../components/admin/OccupancyManager';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { deleteApartment, fetchApartment, updateApartment } from '../../services/apartmentsApi';
 import { fetchAmenities } from '../../services/amenitiesApi';
@@ -72,14 +72,11 @@ export function AdminApartmentDetailPage() {
   const [uploadedPreviews, setUploadedPreviews] = useState<{ dataUrl: string }[]>([]);
   const [imageUrls, setImageUrls] = useState('');
 
-  // Quick Status Form State (in sidebar)
-  const [quickStatus, setQuickStatus] = useState('');
+  // Quick Availability Form State (in sidebar)
   const [quickAvailableFrom, setQuickAvailableFrom] = useState('');
 
   useDocumentTitle(apt ? `${apt.name} — Admin` : 'Apartment Details');
 
-  // Sync quick status when apt loads
-  const currentStatus = quickStatus || (apt?.availabilityStatus ?? 'Available');
   const currentAvailDate = quickAvailableFrom !== '' ? quickAvailableFrom : (apt?.availableFrom?.slice(0, 10) ?? '');
 
   const startEdit = () => {
@@ -94,7 +91,7 @@ export function AdminApartmentDetailPage() {
       bathrooms: apt.bathrooms?.toString() ?? '1',
       size: apt.size?.toString() ?? '',
       price: Number(apt.price).toString(),
-      availabilityStatus: apt.availabilityStatus,
+      availabilityStatus: apt.availabilityStatus ?? 'Available',
       availableFrom: apt.availableFrom?.slice(0, 10) ?? '',
     });
     setUploadedPreviews([]);
@@ -148,24 +145,6 @@ export function AdminApartmentDetailPage() {
       setImageUrls('');
     },
     onError: (e) => setSaveError(getApiErrorMessage(e)),
-  });
-
-  // Quick Status update mutation
-  const quickStatusMutation = useMutation({
-    mutationFn: (newStatus: string) =>
-      updateApartment(id!, {
-        ...apt,
-        availabilityStatus: newStatus,
-        availableFrom: currentAvailDate || null,
-        images: apt?.images ?? [],
-      }),
-    onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ['admin', 'apartment', id] });
-      await qc.invalidateQueries({ queryKey: ['admin', 'apartments'] });
-      await qc.invalidateQueries({ queryKey: ['apartments'] });
-      setStatusSuccessToast(true);
-      setTimeout(() => setStatusSuccessToast(false), 2500);
-    },
   });
 
   const deleteMutation = useMutation({
@@ -402,41 +381,26 @@ export function AdminApartmentDetailPage() {
 
         {/* ── ACTION & SUMMARY RAIL (RIGHT 35%) ── */}
         <div className="space-y-6">
-          {/* Quick Status Control */}
+          {/* Quick Availability Control */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-navy-900">Status & Availability</h2>
+            <h2 className="text-base font-bold text-navy-900">Availability</h2>
 
             {statusSuccessToast && (
               <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-2.5 text-xs font-bold text-emerald-800 flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-emerald-600" /> Status updated successfully!
+                <Check className="h-4 w-4 text-emerald-600" /> Availability date updated!
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">
-                Current Status
-              </label>
-              <select
-                value={currentStatus}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setQuickStatus(val);
-                  quickStatusMutation.mutate(val);
-                }}
-                disabled={quickStatusMutation.isPending}
-                className="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-navy-900 focus:border-accent focus:bg-white focus:outline-none"
-              >
-                {AVAILABILITY_STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Current Availability</p>
+              <div className="mt-1.5">
+                <StatusBadge availableFrom={apt.availableFrom} />
+              </div>
             </div>
 
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">
-                Available From
+                Available From Date
               </label>
               <input
                 type="date"
@@ -446,11 +410,18 @@ export function AdminApartmentDetailPage() {
                   setQuickAvailableFrom(val);
                   updateApartment(id!, { ...apt, availableFrom: val || null }).then(() => {
                     qc.invalidateQueries({ queryKey: ['admin', 'apartment', id] });
+                    setStatusSuccessToast(true);
+                    setTimeout(() => setStatusSuccessToast(false), 2500);
                   });
                 }}
                 className="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-700 focus:border-accent focus:bg-white focus:outline-none"
               />
             </div>
+          </div>
+
+          {/* Occupancy Periods */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <OccupancyManager apartmentId={id!} />
           </div>
 
           {/* Location & Metadata */}
@@ -649,6 +620,16 @@ export function AdminApartmentDetailPage() {
                     className={inputCls}
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Available From Date</label>
+                <input
+                  type="date"
+                  value={editForm.availableFrom}
+                  onChange={(e) => setEditForm((f) => ({ ...f, availableFrom: e.target.value }))}
+                  className={inputCls}
+                />
               </div>
 
               <div>

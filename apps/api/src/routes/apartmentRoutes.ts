@@ -8,6 +8,7 @@ import {
   createApartmentValidators,
   updateApartmentValidators,
 } from '../validators/apartmentValidators.js';
+import occupancyRoutes from './occupancyRoutes.js';
 
 const router = Router();
 
@@ -17,5 +18,8 @@ router.post('/', requireAuth, createApartmentValidators, validateRequest, asyncH
 router.put('/:id', requireAuth, updateApartmentValidators, validateRequest, asyncHandler(apartmentController.update));
 router.delete('/:id', requireAuth, apartmentIdParam, validateRequest, asyncHandler(apartmentController.remove));
 router.delete('/:id/permanent', requireAuth, apartmentIdParam, validateRequest, asyncHandler(apartmentController.destroy));
+
+// Occupancy periods sub-resource
+router.use('/:apartmentId/occupancy', occupancyRoutes);
 
 export default router;

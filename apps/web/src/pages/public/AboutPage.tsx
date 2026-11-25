@@ -8,22 +8,22 @@ export function AboutPage() {
   return (
     <div className="bg-white">
       {/* ── Header ── */}
-      <div className="border-b border-[#E9E5E0] px-5 py-10 sm:px-8 sm:py-14">
+      <div className="border-b border-[#E9E5E0] px-5 py-8 sm:px-8 sm:py-14">
         <div className="mx-auto max-w-6xl">
-          <p className="kicker-accent mb-2">Our Story</p>
-          <h1 className="font-display text-4xl font-semibold tracking-tight text-navy-950 sm:text-5xl">
+          <p className="kicker-accent mb-1.5 text-[10px] sm:text-xs">Our Story</p>
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-navy-950 sm:text-5xl">
             About Porchlight
           </h1>
-          <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-slate-500">
+          <p className="mt-2.5 max-w-xl text-[13px] sm:text-[15px] leading-relaxed text-slate-500">
             A sanctuary of comfort and peace of mind in Bole, Addis Ababa.
           </p>
         </div>
       </div>
 
       {/* ── Apartments section ── */}
-      <section className="py-14 sm:py-20">
+      <section className="py-10 sm:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
             <div className="overflow-hidden rounded-xl border border-[#E9E5E0]">
               <img
                 src="/building.jpg"
@@ -33,20 +33,20 @@ export function AboutPage() {
               />
             </div>
             <div>
-              <h2 className="font-display text-3xl font-semibold tracking-tight text-navy-950 sm:text-4xl">
+              <h2 className="font-display text-xl font-semibold tracking-tight text-navy-950 sm:text-4xl">
                 Built around the feeling of home.
               </h2>
-              <p className="mt-4 text-[15px] leading-relaxed text-slate-600">
+              <p className="mt-3 sm:mt-4 text-[13px] sm:text-[15px] leading-relaxed text-slate-600">
                 Porchlight is a collection of 24 fully furnished apartments in Bole, Addis Ababa. Our 16 two-bedroom apartments and eight three-bedroom apartments each come with two bathrooms, giving you a choice of spaces for your stay.
               </p>
-              <p className="mt-3 text-[15px] leading-relaxed text-slate-600">
+              <p className="mt-2.5 sm:mt-3 text-[13px] sm:text-[15px] leading-relaxed text-slate-600">
                 Whether you're visiting with family, travelling with friends, or staying alongside colleagues, you'll find a space that fits.
               </p>
               <Link
                 to="/apartments"
-                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-3 text-sm font-semibold text-white transition hover:bg-accent-hover"
+                className="mt-5 sm:mt-6 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-semibold text-white transition hover:bg-accent-hover"
               >
-                Explore residences <ArrowRight className="h-4 w-4" />
+                Explore residences <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Link>
             </div>
           </div>
@@ -54,9 +54,9 @@ export function AboutPage() {
       </section>
 
       {/* ── Stats ── */}
-      <section className="border-t border-[#E9E5E0] bg-[#F8F6F2] py-14 sm:py-20">
+      <section className="border-t border-[#E9E5E0] bg-[#F8F6F2] py-10 sm:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <h2 className="font-display text-3xl font-semibold tracking-tight text-navy-950 sm:text-4xl mb-10">
+          <h2 className="font-display text-xl font-semibold tracking-tight text-navy-950 sm:text-4xl mb-6 sm:mb-10">
             By the numbers
           </h2>
           <div className="grid grid-cols-2 gap-px border border-[#E9E5E0] bg-[#E9E5E0] sm:grid-cols-4">
@@ -66,10 +66,10 @@ export function AboutPage() {
               { value: '100%', label: 'Power & water', sub: 'Uninterrupted backup' },
               { value: '24/7', label: 'Security', sub: 'Guarded private access' },
             ].map(({ value, label, sub }) => (
-              <div key={label} className="flex flex-col gap-1 bg-white p-6">
-                <span className="font-display text-3xl font-semibold text-navy-950 sm:text-4xl">{value}</span>
-                <span className="text-[13px] font-semibold text-navy-950">{label}</span>
-                <span className="text-[12px] text-slate-500">{sub}</span>
+              <div key={label} className="flex flex-col gap-0.5 sm:gap-1 bg-white p-4 sm:p-6">
+                <span className="font-display text-2xl font-semibold text-navy-950 sm:text-4xl">{value}</span>
+                <span className="text-xs sm:text-[13px] font-semibold text-navy-950">{label}</span>
+                <span className="text-[10.5px] sm:text-[12px] text-slate-500">{sub}</span>
               </div>
             ))}
           </div>
@@ -77,19 +77,19 @@ export function AboutPage() {
       </section>
 
       {/* ── Location ── */}
-      <section className="border-t border-[#E9E5E0] py-14 sm:py-20">
+      <section className="border-t border-[#E9E5E0] py-10 sm:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
-          <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
             <div>
-              <p className="kicker-accent mb-2">Location</p>
-              <h2 className="font-display text-3xl font-semibold tracking-tight text-navy-950 sm:text-4xl">
+              <p className="kicker-accent mb-1.5 text-[10px] sm:text-xs">Location</p>
+              <h2 className="font-display text-xl font-semibold tracking-tight text-navy-950 sm:text-4xl">
                 The Bole Advantage
               </h2>
-              <p className="mt-4 text-[15px] leading-relaxed text-slate-600">
+              <p className="mt-3 sm:mt-4 text-[13px] sm:text-[15px] leading-relaxed text-slate-600">
                 Situated in Bole, Porchlight places you in the diplomatic, business, and culinary nexus of Addis Ababa — while remaining on a quiet residential street that shelters you from traffic and noise.
               </p>
-              <div className="mt-5 flex items-start gap-2 text-[14px] text-slate-500">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+              <div className="mt-4 sm:mt-5 flex items-start gap-2 text-xs sm:text-[14px] text-slate-500">
+                <MapPin className="mt-0.5 h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-accent" />
                 Bole, Addis Ababa, Ethiopia
               </div>
             </div>

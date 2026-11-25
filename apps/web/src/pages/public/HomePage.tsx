@@ -38,13 +38,13 @@ export function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#34282D]/85 via-[#34282D]/30 to-transparent" />
 
         <div className="relative z-10 px-5 pb-8 sm:px-10 sm:pb-16 md:max-w-3xl lg:pb-20">
-          <p className="kicker mb-2 text-white/60 sm:mb-3">Bole, Addis Ababa</p>
+          <p className="kicker mb-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-[0.14em] text-white/60 sm:mb-3">Bole, Addis Ababa</p>
 
-          <h1 className="font-display text-[1.85rem] font-semibold leading-[1.12] tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="font-display text-2xl font-semibold leading-[1.15] tracking-tight text-white sm:text-5xl lg:text-6xl">
             Live beautifully<br />in Bole.
           </h1>
 
-          <p className="mt-2.5 max-w-md text-[13px] leading-relaxed text-white/70 sm:mt-3 sm:text-[15px]">
+          <p className="mt-2 max-w-md text-xs leading-relaxed text-white/70 sm:mt-3 sm:text-[15px]">
             Discover thoughtfully furnished residences designed for comfortable city living.
           </p>
 
@@ -68,19 +68,19 @@ export function HomePage() {
       </section>
 
       {/* ── FEATURED RESIDENCES ──────────────────────────────── */}
-      <section className="bg-white py-10 sm:py-16">
+      <section className="bg-white py-8 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-8">
 
-          <div className="mb-6 flex items-end justify-between gap-4 sm:mb-8">
+          <div className="mb-5 flex items-end justify-between gap-4 sm:mb-8">
             <div>
-              <p className="kicker-accent mb-1">Available Residences</p>
-              <h2 className="font-display text-2xl font-semibold tracking-tight text-navy-950 sm:text-3xl">
+              <p className="kicker-accent mb-1 text-[10px] sm:text-xs">Available Residences</p>
+              <h2 className="font-display text-xl font-semibold tracking-tight text-navy-950 sm:text-3xl">
                 Find your residence
               </h2>
             </div>
             <Link
               to="/apartments"
-              className="shrink-0 inline-flex items-center gap-1 text-sm font-semibold text-accent transition hover:text-accent-hover"
+              className="shrink-0 inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-accent transition hover:text-accent-hover"
             >
               View all <ArrowRight className="h-3.5 w-3.5" />
             </Link>
@@ -101,13 +101,13 @@ export function HomePage() {
       </section>
 
       {/* ── AMENITIES ────────────────────────────────────────── */}
-      <section className="border-t border-[#E9E5E0] bg-[#F8F6F2] py-10 sm:py-16">
+      <section className="border-t border-[#E9E5E0] bg-[#F8F6F2] py-8 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-8">
 
-          <div className="mb-6 flex items-end justify-between gap-4 sm:mb-8">
+          <div className="mb-5 flex items-end justify-between gap-4 sm:mb-8">
             <div>
-              <p className="kicker-accent mb-1">Building Features</p>
-              <h2 className="font-display text-2xl font-semibold tracking-tight text-navy-950 sm:text-3xl">
+              <p className="kicker-accent mb-1 text-[10px] sm:text-xs">Building Features</p>
+              <h2 className="font-display text-xl font-semibold tracking-tight text-navy-950 sm:text-3xl">
                 Everything included
               </h2>
             </div>
@@ -118,12 +118,12 @@ export function HomePage() {
             {BUILDING_AMENITIES.map((a) => {
               const Icon = getAmenityIcon(a.icon ?? a.slug);
               return (
-                <div key={a.id} className="flex items-start gap-3 bg-white p-3.5 sm:p-4">
-                  <Icon className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden />
+                <div key={a.id} className="flex items-start gap-2.5 sm:gap-3 bg-white p-3 sm:p-4">
+                  <Icon className="mt-0.5 h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-accent" aria-hidden />
                   <div className="min-w-0">
-                    <span className="block text-[13px] font-semibold text-navy-950 leading-tight">{a.name}</span>
+                    <span className="block text-xs sm:text-[13px] font-semibold text-navy-950 leading-tight">{a.name}</span>
                     {a.description && (
-                      <span className="mt-0.5 block text-[11px] leading-snug text-slate-500 line-clamp-2">
+                      <span className="mt-0.5 block text-[10px] sm:text-[11px] leading-snug text-slate-500 line-clamp-2">
                         {a.description}
                       </span>
                     )}
@@ -136,12 +136,12 @@ export function HomePage() {
       </section>
 
       {/* ── LOCATION ─────────────────────────────────────────── */}
-      <section className="border-t border-[#E9E5E0] bg-white py-10 sm:py-16">
+      <section className="border-t border-[#E9E5E0] bg-white py-8 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-8">
 
-          <div className="mb-6 sm:mb-8">
-            <p className="kicker-accent mb-1">Location</p>
-            <h2 className="font-display text-2xl font-semibold tracking-tight text-navy-950 sm:text-3xl">
+          <div className="mb-5 sm:mb-8">
+            <p className="kicker-accent mb-1 text-[10px] sm:text-xs">Location</p>
+            <h2 className="font-display text-xl font-semibold tracking-tight text-navy-950 sm:text-3xl">
               Bole, Addis Ababa
             </h2>
           </div>
@@ -150,7 +150,7 @@ export function HomePage() {
           <div className="grid gap-6 md:grid-cols-2 md:items-start">
             {/* Contact details */}
             <div className="order-2 md:order-1">
-              <ul className="space-y-3 text-sm text-slate-600">
+              <ul className="space-y-2.5 sm:space-y-3 text-[12.5px] sm:text-sm text-slate-600">
                 <li className="flex items-start gap-2.5">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
                   <span>{COMPANY.address}</span>
@@ -174,9 +174,9 @@ export function HomePage() {
               </ul>
               <Link
                 to="/contact"
-                className="mt-5 inline-flex items-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent-hover"
+                className="mt-4 sm:mt-5 inline-flex items-center gap-1.5 sm:gap-2 rounded-lg bg-accent px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white transition-colors hover:bg-accent-hover"
               >
-                Get in touch <ArrowRight className="h-4 w-4" />
+                Get in touch <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Link>
             </div>
 

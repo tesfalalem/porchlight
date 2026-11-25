@@ -1,4 +1,4 @@
-import type { ApartmentDetailDto, ApartmentListItemDto } from '@porchlight/shared';
+import type { ApartmentDetailDto, ApartmentListItemDto, OccupancyPeriodDto, CreateOccupancyPeriodPayload } from '@porchlight/shared';
 import { apiClient } from '../lib/apiClient';
 
 export interface ApartmentQueryParams {
@@ -13,6 +13,8 @@ export interface ApartmentQueryParams {
   amenityIds?: string[];
   sort?: string;
   includeArchived?: boolean;
+  checkIn?: string;
+  checkOut?: string;
 }
 
 export async function fetchApartments(params?: ApartmentQueryParams): Promise<ApartmentListItemDto[]> {
@@ -46,4 +48,32 @@ export async function archiveApartment(id: string): Promise<void> {
 
 export async function deleteApartment(id: string): Promise<void> {
   await apiClient.delete(`/apartments/${id}/permanent`);
+}
+
+// ── Occupancy periods ────────────────────────────────────────────────────────
+
+export async function fetchOccupancyPeriods(apartmentId: string): Promise<OccupancyPeriodDto[]> {
+  const { data } = await apiClient.get<OccupancyPeriodDto[]>(`/apartments/${apartmentId}/occupancy`);
+  return data;
+}
+
+export async function createOccupancyPeriod(
+  apartmentId: string,
+  payload: CreateOccupancyPeriodPayload,
+): Promise<OccupancyPeriodDto> {
+  const { data } = await apiClient.post<OccupancyPeriodDto>(`/apartments/${apartmentId}/occupancy`, payload);
+  return data;
+}
+
+export async function updateOccupancyPeriod(
+  apartmentId: string,
+  periodId: string,
+  payload: CreateOccupancyPeriodPayload,
+): Promise<OccupancyPeriodDto> {
+  const { data } = await apiClient.put<OccupancyPeriodDto>(`/apartments/${apartmentId}/occupancy/${periodId}`, payload);
+  return data;
+}
+
+export async function deleteOccupancyPeriod(apartmentId: string, periodId: string): Promise<void> {
+  await apiClient.delete(`/apartments/${apartmentId}/occupancy/${periodId}`);
 }

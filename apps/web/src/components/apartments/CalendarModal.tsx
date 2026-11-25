@@ -71,19 +71,24 @@ export function CalendarModal({
       }
       const rect = anchorEl.getBoundingClientRect();
       const popoverWidth = 320;
+      const popoverHeight = 440;
       let left = rect.left;
       if (left + popoverWidth > window.innerWidth - 16) {
         left = Math.max(16, window.innerWidth - popoverWidth - 16);
       }
-      if (rect.bottom + 380 <= window.innerHeight) {
+      if (rect.bottom + popoverHeight <= window.innerHeight - 16) {
         setCoords({
           top: rect.bottom + 8,
           left,
         });
-      } else {
-        const bottom = Math.max(16, window.innerHeight - rect.top + 8);
+      } else if (rect.top - popoverHeight >= 16) {
         setCoords({
-          bottom,
+          bottom: window.innerHeight - rect.top + 8,
+          left,
+        });
+      } else {
+        setCoords({
+          top: Math.max(16, window.innerHeight - popoverHeight - 16),
           left,
         });
       }
@@ -198,8 +203,8 @@ export function CalendarModal({
     <div
       className={
         coords
-          ? 'w-[320px] overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 shadow-2xl shadow-navy-950/15 ring-1 ring-slate-900/5 animate-in fade-in zoom-in-95 duration-150'
-          : 'w-full max-w-[320px] overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 shadow-2xl shadow-navy-950/15 ring-1 ring-slate-900/5 animate-in fade-in zoom-in-95 duration-150'
+          ? 'w-[320px] max-h-[calc(100vh-32px)] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 shadow-2xl shadow-navy-950/20 ring-1 ring-slate-900/5 animate-in fade-in zoom-in-95 duration-150'
+          : 'w-full max-w-[320px] max-h-[calc(100vh-32px)] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-4 text-slate-900 shadow-2xl shadow-navy-950/20 ring-1 ring-slate-900/5 animate-in fade-in zoom-in-95 duration-150'
       }
       onClick={(e) => e.stopPropagation()}
     >

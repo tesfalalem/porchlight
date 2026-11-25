@@ -59,7 +59,7 @@ export function Footer() {
                 style={{ marginTop: '-20%' }}
               />
             </div>
-            <span className="font-display text-sm font-semibold tracking-[0.18em] text-white">
+            <span className="font-display text-xs sm:text-sm font-semibold tracking-[0.16em] sm:tracking-[0.18em] text-white">
               PORCHLIGHT
             </span>
           </Link>
@@ -69,13 +69,13 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-6 pt-5 sm:grid-cols-3 sm:gap-10">
           {/* Navigate */}
           <div>
-            <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/40">
+            <p className="mb-2.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] text-white/40">
               Navigate
             </p>
             <ul className="space-y-1.5">
               {navLinks.map(({ to, label }) => (
                 <li key={to}>
-                  <Link to={to} className="text-[13px] text-white/70 transition hover:text-white">
+                  <Link to={to} className="text-[12px] sm:text-[13px] text-white/70 transition hover:text-white">
                     {label}
                   </Link>
                 </li>
@@ -85,14 +85,14 @@ export function Footer() {
 
           {/* Contact with Colored Social Media Icons below */}
           <div>
-            <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-white/40">
+            <p className="mb-2.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] text-white/40">
               Contact
             </p>
             <ul className="space-y-2">
               <li>
                 <a
                   href={`tel:${COMPANY.phone}`}
-                  className="flex items-center gap-2 text-[13px] text-white/70 transition hover:text-white"
+                  className="flex items-center gap-2 text-[12px] sm:text-[13px] text-white/70 transition hover:text-white"
                 >
                   <Phone className="h-3.5 w-3.5 shrink-0 text-white/40" />
                   <span className="truncate">{COMPANY.phone}</span>
@@ -101,13 +101,13 @@ export function Footer() {
               <li>
                 <a
                   href={`mailto:${COMPANY.email}`}
-                  className="flex items-center gap-2 text-[13px] text-white/70 transition hover:text-white"
+                  className="flex items-center gap-2 text-[12px] sm:text-[13px] text-white/70 transition hover:text-white"
                 >
                   <Mail className="h-3.5 w-3.5 shrink-0 text-white/40" />
                   <span className="truncate">{COMPANY.email}</span>
                 </a>
               </li>
-              <li className="flex items-start gap-2 text-[13px] text-white/60">
+              <li className="flex items-start gap-2 text-[12px] sm:text-[13px] text-white/60">
                 <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-white/40" />
                 <span>Bole, Addis Ababa</span>
               </li>
@@ -147,10 +147,10 @@ export function Footer() {
       {/* ── Bottom Bar: Copyright & Legal side-by-side ── */}
       <div className="border-t border-white/8">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <p className="text-[12px] text-white/40">
+          <p className="text-[11px] sm:text-[12px] text-white/40">
             © {year} Porchlight Apartment. All rights reserved.
           </p>
-          <div className="flex items-center gap-4 text-[12px] text-white/40">
+          <div className="flex items-center gap-4 text-[11px] sm:text-[12px] text-white/40">
             <Link to="/privacy" className="transition hover:text-white">
               Privacy Policy
             </Link>

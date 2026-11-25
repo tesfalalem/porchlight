@@ -3,6 +3,22 @@ import type { AVAILABILITY_STATUSES, INQUIRY_STATUSES } from './constants.js';
 export type AvailabilityStatus = (typeof AVAILABILITY_STATUSES)[number];
 export type InquiryStatus = (typeof INQUIRY_STATUSES)[number];
 
+export interface OccupancyPeriodDto {
+  id: string;
+  apartmentId: string;
+  startDate: string; // ISO date string YYYY-MM-DD
+  endDate: string;   // ISO date string YYYY-MM-DD
+  tenantNote: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateOccupancyPeriodPayload {
+  startDate: string;
+  endDate: string;
+  tenantNote?: string | null;
+}
+
 export interface AmenityDto {
   id: string;
   name: string;
@@ -31,11 +47,13 @@ export interface ApartmentListItemDto {
   bathrooms: number;
   size: number | null;
   price: number;
-  availabilityStatus: AvailabilityStatus;
   availableFrom: string | null;
+  availabilityStatus?: string;
   createdAt: string;
   amenities: AmenityDto[];
   images: ApartmentImageDto[];
+  occupancyPeriods?: OccupancyPeriodDto[];
+  isAvailableForDates?: boolean;
 }
 
 export interface ApartmentDetailDto extends ApartmentListItemDto {
@@ -110,7 +128,7 @@ export interface DashboardStatsDto {
   pastCustomers: number;
   newInquiries: number;
   inquiriesByStatus: { status: InquiryStatus; count: number }[];
-  availabilityDistribution: { status: AvailabilityStatus; count: number }[];
+  availabilityDistribution: { status: string; count: number }[];
   recentInquiries: {
     id: string;
     subject: string;

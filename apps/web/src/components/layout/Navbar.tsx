@@ -14,8 +14,17 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
-  // Close drawer on route change
-  useEffect(() => { setOpen(false); }, [location.pathname]);
+  const handleClose = () => {
+    if (document.activeElement instanceof HTMLElement && document.getElementById('mobile-nav')?.contains(document.activeElement)) {
+      document.activeElement.blur();
+    }
+    setOpen(false);
+  };
+
+  // Close drawer on route change and clear active focus inside drawer
+  useEffect(() => {
+    handleClose();
+  }, [location.pathname]);
 
   // Prevent body scroll when drawer is open
   useEffect(() => {
@@ -38,7 +47,7 @@ export function Navbar() {
                 style={{ marginTop: '-20%' }}
               />
             </div>
-            <span className="font-display text-sm font-semibold tracking-[0.18em] text-white">
+            <span className="font-display text-xs sm:text-sm font-semibold tracking-[0.16em] sm:tracking-[0.18em] text-white">
               PORCHLIGHT
             </span>
           </Link>
@@ -83,7 +92,7 @@ export function Navbar() {
         <div
           className="fixed inset-0 z-40 bg-black/40 lg:hidden"
           aria-hidden="true"
-          onClick={() => setOpen(false)}
+          onClick={handleClose}
         />
       )}
 
@@ -91,7 +100,7 @@ export function Navbar() {
       <nav
         id="mobile-nav"
         aria-label="Mobile navigation"
-        aria-hidden={!open}
+        inert={!open}
         className={clsx(
           'fixed inset-y-0 right-0 z-50 w-72 bg-[#34282D] lg:hidden flex flex-col',
           'transition-transform duration-250 ease-in-out',
@@ -102,7 +111,7 @@ export function Navbar() {
         <div className="flex h-14 items-center justify-end border-b border-white/10 px-5">
           <button
             type="button"
-            onClick={() => setOpen(false)}
+            onClick={handleClose}
             aria-label="Close navigation"
             className="flex h-8 w-8 items-center justify-center rounded text-white/60 transition hover:text-white"
           >
@@ -117,10 +126,10 @@ export function Navbar() {
               <NavLink
                 to={to}
                 end={to === '/'}
-                onClick={() => setOpen(false)}
+                onClick={handleClose}
                 className={({ isActive }) =>
                   clsx(
-                    'flex items-center py-3.5 text-base font-medium border-b border-white/8 transition-colors',
+                    'flex items-center py-2.5 sm:py-3.5 text-[13.5px] sm:text-base font-medium border-b border-white/8 transition-colors',
                     isActive ? 'text-white' : 'text-white/60 hover:text-white',
                   )
                 }

@@ -14,10 +14,16 @@ const apartmentBodyFields = [
   body('bathrooms').isInt({ min: 0 }).withMessage('Bathrooms must be a non-negative integer'),
   body('size').optional({ nullable: true }).isFloat({ min: 0 }),
   body('price').isFloat({ min: 0 }).withMessage('Price must be a positive number'),
-  body('availabilityStatus')
-    .isIn([...AVAILABILITY_STATUSES, 'Coming Soon'])
-    .withMessage('Invalid availability status'),
-  body('availableFrom').optional({ nullable: true }).isISO8601(),
+  body('availabilityStatus').optional({ nullable: true }).isString(),
+  body('availableFrom')
+    .optional({ nullable: true })
+    .custom((val) => {
+      if (!val) return true;
+      if (!/^\d{4}-\d{2}-\d{2}/.test(val) && isNaN(Date.parse(val))) {
+        throw new Error('Available From must be a valid date');
+      }
+      return true;
+    }),
   body('amenityIds').optional().isArray(),
   body('amenityIds.*').optional().isString(),
   body('images').optional().isArray(),

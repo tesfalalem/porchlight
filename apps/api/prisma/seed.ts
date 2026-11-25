@@ -60,6 +60,7 @@ async function main() {
       size: 65,
       price: 45000,
       availabilityStatus: 'Available',
+      availableFrom: new Date('2026-11-01'),
       description:
         'A bright one-bedroom suite with modern furnishings, open living area, and views toward Bole. Ideal for professionals seeking comfort and convenience close to restaurants and business centers.',
     },
@@ -73,7 +74,7 @@ async function main() {
       size: 95,
       price: 72000,
       availabilityStatus: 'Upcoming',
-      availableFrom: new Date('2026-11-01'),
+      availableFrom: new Date('2026-12-01'),
       description:
         'Spacious two-bedroom corner unit with separate dining space, premium finishes, and in-unit laundry. Perfect for small families or shared living with room to work from home.',
     },
@@ -87,6 +88,7 @@ async function main() {
       size: 48,
       price: 38000,
       availabilityStatus: 'Occupied',
+      availableFrom: new Date('2027-01-15'),
       description:
         'Efficient studio layout with smart storage, quality mattress and linens, and a dedicated work nook. A practical choice for short or extended stays in Bole.',
     },

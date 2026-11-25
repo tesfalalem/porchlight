@@ -41,7 +41,6 @@ export function BedroomListingPage() {
   const floorButtonRef = useRef<HTMLButtonElement>(null);
   const floorDropdownRef = useRef<HTMLDivElement>(null);
 
-  const [availableOnly, setAvailableOnly] = useState(false);
   const [calStart, setCalStart] = useState('');
   const [calEnd, setCalEnd] = useState('');
   const [calOpen, setCalOpen] = useState(false);
@@ -113,42 +112,23 @@ export function BedroomListingPage() {
       list = list.filter((a) => String(a.floor ?? 0) === floorFilter);
     }
 
-    if (availableOnly) {
-      list = list.filter((a) => a.availabilityStatus === 'Available');
-    }
-
     if (calStart) {
       const [ey, em, ed] = (calEnd || calStart).split('-').map(Number);
       const cutoff = new Date(ey, em - 1, ed, 23, 59, 59, 999);
 
       list = list.filter((a) => {
-        // Occupied apartments cannot be moved into
-        if (a.availabilityStatus === 'Occupied') return false;
-
-        // If Available, it is move-in ready immediately
-        if (a.availabilityStatus === 'Available') {
-          if (!a.availableFrom) return true;
-          return new Date(a.availableFrom) <= cutoff;
-        }
-
-        // If Upcoming, it must become available on or before cutoff
-        if (a.availabilityStatus === 'Upcoming' || (a.availabilityStatus as string) === 'Coming Soon') {
-          if (!a.availableFrom) return false;
-          return new Date(a.availableFrom) <= cutoff;
-        }
-
-        return false;
+        if (!a.availableFrom) return true;
+        return new Date(a.availableFrom) <= cutoff;
       });
     }
 
     return list;
-  }, [query.data, floorFilter, availableOnly, calStart, calEnd]);
+  }, [query.data, floorFilter, calStart, calEnd]);
 
-  const hasFilters = !!(floorFilter || availableOnly || calStart);
+  const hasFilters = !!(floorFilter || calStart);
   const resetFilters = () => {
     setFloorFilter('');
     setFloorOpen(false);
-    setAvailableOnly(false);
     setCalStart('');
     setCalEnd('');
   };
@@ -184,49 +164,49 @@ export function BedroomListingPage() {
               </Link>
 
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-accent shadow-xs">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/25 bg-accent/10 px-2.5 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-accent shadow-xs">
                   <Sparkles className="h-3 w-3" /> Bole Residences · Addis Ababa
                 </span>
               </div>
 
-              <h1 className="font-display text-3xl font-extrabold tracking-tight text-navy-950 sm:text-5xl lg:text-6xl">
+              <h1 className="font-display text-2xl font-extrabold tracking-tight text-navy-950 sm:text-5xl lg:text-6xl">
                 {label}{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-blue-700">
                   Apartments
                 </span>
               </h1>
 
-              <p className="max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
+              <p className="max-w-xl text-xs leading-relaxed text-slate-600 sm:text-base">
                 Curated, fully furnished {label.toLowerCase()} residences with private bathrooms, 24/7 dedicated generator power backup, reserve water storage, and assigned parking.
               </p>
             </div>
 
             {/* Instant Bedroom Switcher Pill */}
-            <div className="flex w-full flex-col items-start gap-2 sm:w-auto md:items-end">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+            <div className="flex w-full flex-col items-start gap-1.5 sm:gap-2 sm:w-auto md:items-end">
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400">
                 Switch Residence Type
               </span>
-              <div className="grid w-full grid-cols-2 rounded-2xl border border-slate-200/90 bg-white p-1.5 shadow-md shadow-navy-950/5 sm:inline-flex sm:w-auto">
+              <div className="grid w-full grid-cols-2 rounded-2xl border border-slate-200/90 bg-white p-1 sm:p-1.5 shadow-md shadow-navy-950/5 sm:inline-flex sm:w-auto">
                 <Link
                   to="/apartments/2-bedroom"
-                  className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all sm:px-5 sm:text-sm ${
+                  className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl px-3 py-2 text-xs font-bold transition-all sm:px-5 sm:py-2.5 sm:text-sm ${
                     bedrooms === 2
                       ? 'bg-navy-950 text-white shadow-md'
                       : 'text-slate-600 hover:text-navy-950 hover:bg-slate-50'
                   }`}
                 >
-                  <BedDouble className="h-4 w-4" />
+                  <BedDouble className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   2 Bedroom
                 </Link>
                 <Link
                   to="/apartments/3-bedroom"
-                  className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition-all sm:px-5 sm:text-sm ${
+                  className={`inline-flex items-center justify-center gap-1.5 sm:gap-2 rounded-xl px-3 py-2 text-xs font-bold transition-all sm:px-5 sm:py-2.5 sm:text-sm ${
                     bedrooms === 3
                       ? 'bg-navy-950 text-white shadow-md'
                       : 'text-slate-600 hover:text-navy-950 hover:bg-slate-50'
                   }`}
                 >
-                  <BedDouble className="h-4 w-4" />
+                  <BedDouble className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   3 Bedroom
                 </Link>
               </div>
@@ -242,33 +222,33 @@ export function BedroomListingPage() {
             <div className="flex flex-col gap-3.5 lg:flex-row lg:items-center lg:justify-between">
 
               {/* Mobile/Tablet Header: Results Count & Filter Title */}
-              <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-100 lg:hidden">
-                <div className="flex items-center gap-2.5">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                    <Building2 className="h-4 w-4" />
+              <div className="flex items-center justify-between gap-3 pb-2.5 sm:pb-3 border-b border-slate-100 lg:hidden">
+                <div className="flex items-center gap-2 sm:gap-2.5">
+                  <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                    <Building2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-700 block">
+                    <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-slate-700 block">
                       Filter Residences
                     </span>
-                    <span className="text-[11px] text-slate-400">Addis Ababa · Bole</span>
+                    <span className="text-[10px] sm:text-[11px] text-slate-400">Addis Ababa · Bole</span>
                   </div>
                 </div>
-                <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-bold text-navy-950 shadow-2xs">
-                  <span className="h-2 w-2 rounded-full bg-accent animate-pulse" />
+                <span className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 sm:px-3.5 sm:py-1.5 text-[11px] sm:text-xs font-bold text-navy-950 shadow-2xs">
+                  <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-accent animate-pulse" />
                   {filtered.length} {filtered.length === 1 ? 'Residence' : 'Residences'} Available
                 </span>
               </div>
 
               {/* Filtering Controls — Generously sized, spacious, and ergonomic */}
-              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3.5">
                 {/* Floor Dropdown (Stories 3 to 10) */}
                 <div className="relative">
                   <button
                     ref={floorButtonRef}
                     type="button"
                     onClick={() => setFloorOpen((v) => !v)}
-                    className={`inline-flex items-center gap-2.5 rounded-2xl px-4 py-2.5 sm:px-5 sm:py-3 text-sm font-semibold sm:font-bold transition-all shadow-xs ${
+                    className={`inline-flex items-center gap-2 sm:gap-2.5 rounded-2xl px-3 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-semibold sm:font-bold transition-all shadow-xs ${
                       floorFilter !== ''
                         ? 'border border-accent bg-accent text-white shadow-md shadow-accent/25 ring-2 ring-accent/20'
                         : floorOpen
@@ -404,31 +384,13 @@ export function BedroomListingPage() {
                 <div className="h-8 w-px bg-slate-200/90 hidden sm:block mx-0.5" />
 
                 {/* Additional Feature & Date Filters */}
-                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5">
-                  {/* "Available Now" Toggle Pill */}
-                  <button
-                    type="button"
-                    onClick={() => setAvailableOnly((v) => !v)}
-                    className={`inline-flex items-center gap-2.5 rounded-2xl px-4 py-2.5 sm:px-5 sm:py-3 text-sm font-semibold sm:font-bold transition-all shadow-xs ${
-                      availableOnly
-                        ? 'border border-emerald-300 bg-emerald-50 text-emerald-900 font-bold shadow-sm ring-2 ring-emerald-500/20'
-                        : 'border border-slate-200/90 bg-slate-50/80 text-slate-700 hover:bg-white hover:border-slate-300 hover:shadow-sm'
-                    }`}
-                  >
-                    <span
-                      className={`h-2.5 w-2.5 rounded-full transition-all ${
-                        availableOnly ? 'bg-emerald-500 animate-pulse ring-4 ring-emerald-500/20' : 'bg-slate-400'
-                      }`}
-                    />
-                    <span>Available Now</span>
-                  </button>
-
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3.5">
                   {/* Move-in Date Button */}
                   <button
                     ref={calButtonRef}
                     type="button"
                     onClick={() => setCalOpen((v) => !v)}
-                    className={`inline-flex items-center gap-2.5 rounded-2xl px-4 py-2.5 sm:px-5 sm:py-3 text-sm font-semibold sm:font-bold transition-all shadow-xs ${
+                    className={`inline-flex items-center gap-2 sm:gap-2.5 rounded-2xl px-3 py-2 sm:px-5 sm:py-3 text-xs sm:text-sm font-semibold sm:font-bold transition-all shadow-xs ${
                       calStart
                         ? 'border border-accent bg-accent/10 text-accent font-bold shadow-sm ring-2 ring-accent/20'
                         : calOpen
@@ -436,7 +398,7 @@ export function BedroomListingPage() {
                         : 'border border-slate-200/90 bg-slate-50/80 text-slate-700 hover:bg-white hover:border-slate-300 hover:shadow-sm'
                     }`}
                   >
-                    <Calendar className="h-4 w-4 sm:h-4.5 sm:w-4.5 text-accent" />
+                    <Calendar className="h-3.5 w-3.5 sm:h-4.5 sm:w-4.5 text-accent" />
                     <span>
                       {calStart && calEnd
                         ? `${formatDisplayDate(calStart)} → ${formatDisplayDate(calEnd)}`
@@ -459,7 +421,7 @@ export function BedroomListingPage() {
                       </span>
                     ) : (
                       <ChevronDown
-                        className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${calOpen ? 'rotate-180' : ''}`}
+                        className={`h-3.5 w-3.5 sm:h-4 sm:w-4 text-slate-400 transition-transform duration-200 ${calOpen ? 'rotate-180' : ''}`}
                       />
                     )}
                   </button>
@@ -469,9 +431,9 @@ export function BedroomListingPage() {
                     <button
                       type="button"
                       onClick={resetFilters}
-                      className="inline-flex items-center gap-2 rounded-2xl border border-dashed border-slate-300 px-4 py-2.5 sm:px-4.5 sm:py-3 text-sm font-semibold text-slate-600 transition hover:border-red-300 hover:bg-red-50/60 hover:text-red-700 shadow-2xs"
+                      className="inline-flex items-center gap-1.5 sm:gap-2 rounded-2xl border border-dashed border-slate-300 px-3 py-2 sm:px-4.5 sm:py-3 text-xs sm:text-sm font-semibold text-slate-600 transition hover:border-red-300 hover:bg-red-50/60 hover:text-red-700 shadow-2xs"
                     >
-                      <RotateCcw className="h-4 w-4" />
+                      <RotateCcw className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                       <span>Clear Filters</span>
                     </button>
                   )}

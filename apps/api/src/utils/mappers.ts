@@ -7,12 +7,14 @@ import type {
   CustomerDto,
   InquiryDto,
   InquiryStatus,
+  OccupancyPeriodDto,
 } from '@porchlight/shared';
-import type { Amenity, Apartment, ApartmentImage, Customer, Inquiry } from '@prisma/client';
+import type { Amenity, Apartment, ApartmentImage, Customer, Inquiry, OccupancyPeriod } from '@prisma/client';
 
 type ApartmentWithRelations = Apartment & {
   images: ApartmentImage[];
   apartmentAmenities: { amenity: Amenity }[];
+  occupancyPeriods?: OccupancyPeriod[];
 };
 
 function mapAmenity(a: Amenity): AmenityDto {
@@ -36,6 +38,7 @@ function mapImage(img: ApartmentImage): ApartmentImageDto {
 }
 
 export function mapApartmentListItem(apartment: ApartmentWithRelations): ApartmentListItemDto {
+  const toDate = (d: Date) => d.toISOString().slice(0, 10);
   return {
     id: apartment.id,
     name: apartment.name,
@@ -49,13 +52,22 @@ export function mapApartmentListItem(apartment: ApartmentWithRelations): Apartme
     size: apartment.size,
     price: Number(apartment.price),
     availabilityStatus: apartment.availabilityStatus as AvailabilityStatus,
-    availableFrom: apartment.availableFrom?.toISOString() ?? null,
+    availableFrom: apartment.availableFrom ? toDate(apartment.availableFrom) : null,
     createdAt: apartment.createdAt.toISOString(),
     amenities: apartment.apartmentAmenities.map((aa) => mapAmenity(aa.amenity)),
     images: apartment.images
       .slice()
       .sort((a, b) => a.sortOrder - b.sortOrder)
       .map(mapImage),
+    occupancyPeriods: apartment.occupancyPeriods?.map((p) => ({
+      id: p.id,
+      apartmentId: p.apartmentId,
+      startDate: toDate(p.startDate),
+      endDate: toDate(p.endDate),
+      tenantNote: p.tenantNote,
+      createdAt: p.createdAt.toISOString(),
+      updatedAt: p.updatedAt.toISOString(),
+    } satisfies OccupancyPeriodDto)),
   };
 }
 

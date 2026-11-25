@@ -5,6 +5,7 @@ import { mapApartmentDetail, mapApartmentListItem } from '../utils/mappers.js';
 const includeRelations = {
   images: true,
   apartmentAmenities: { include: { amenity: true } },
+  occupancyPeriods: { orderBy: { startDate: 'asc' as const } },
 } as const;
 
 export interface ApartmentFilters {
@@ -19,6 +20,9 @@ export interface ApartmentFilters {
   amenityIds?: string[];
   sort?: 'price_asc' | 'price_desc' | 'name_asc' | 'availability';
   includeArchived?: boolean;
+  /** Date-range availability filter (YYYY-MM-DD) */
+  checkIn?: string;
+  checkOut?: string;
 }
 
 function buildWhere(filters: ApartmentFilters) {
@@ -76,32 +80,40 @@ function buildOrderBy(sort?: ApartmentFilters['sort']) {
     case 'name_asc':
       return { name: 'asc' as const };
     case 'availability':
-      return { availabilityStatus: 'asc' as const };
+      return { availableFrom: 'asc' as const };
     default:
       return { createdAt: 'desc' as const };
   }
 }
 
 export async function listApartments(filters: ApartmentFilters = {}) {
-  const apartments = await prisma.apartment.findMany({
-    where: buildWhere(filters),
-    include: includeRelations,
-    orderBy: filters.sort === 'availability' ? undefined : buildOrderBy(filters.sort),
-  });
+  // Build base Prisma where, adding occupancy overlap exclusion if dates provided
+  const baseWhere = buildWhere(filters);
 
-  if (filters.sort === 'availability') {
-    const orderMap: Record<string, number> = {
-      Available: 1,
-      Upcoming: 2,
-      'Coming Soon': 2,
-      Occupied: 3,
+  // If checkIn/checkOut provided, exclude apartments that have an overlapping occupancy period
+  let where: Record<string, unknown> = baseWhere;
+  if (filters.checkIn && filters.checkOut) {
+    const ci = new Date(filters.checkIn);
+    const co = new Date(filters.checkOut);
+    // Overlap condition: startDate < checkOut AND endDate > checkIn
+    const overlapExclusion = {
+      occupancyPeriods: {
+        none: {
+          AND: [
+            { startDate: { lt: co } },
+            { endDate: { gt: ci } },
+          ],
+        },
+      },
     };
-    apartments.sort((a, b) => {
-      const orderA = orderMap[a.availabilityStatus] ?? 99;
-      const orderB = orderMap[b.availabilityStatus] ?? 99;
-      return orderA - orderB;
-    });
+    where = { AND: [baseWhere, overlapExclusion] };
   }
+
+  const apartments = await prisma.apartment.findMany({
+    where,
+    include: includeRelations,
+    orderBy: buildOrderBy(filters.sort),
+  });
 
   return apartments.map(mapApartmentListItem);
 }
@@ -126,7 +138,7 @@ export interface ApartmentInput {
   bathrooms: number;
   size?: number | null;
   price: number;
-  availabilityStatus: string;
+  availabilityStatus?: string;
   availableFrom?: string | null;
   amenityIds?: string[];
   images?: { url: string; alt?: string | null; sortOrder?: number; isPrimary?: boolean }[];
@@ -172,8 +184,8 @@ export async function createApartment(input: ApartmentInput) {
       bathrooms: input.bathrooms,
       size: input.size ?? null,
       price: input.price,
-      availabilityStatus: input.availabilityStatus,
-      availableFrom: input.availableFrom ? new Date(input.availableFrom) : null,
+      availabilityStatus: input.availabilityStatus || 'Available',
+      availableFrom: input.availableFrom ? new Date(input.availableFrom) : new Date(),
     },
   });
 
@@ -200,8 +212,13 @@ export async function updateApartment(id: string, input: ApartmentInput) {
       bathrooms: input.bathrooms,
       size: input.size ?? null,
       price: input.price,
-      availabilityStatus: input.availabilityStatus,
-      availableFrom: input.availableFrom ? new Date(input.availableFrom) : null,
+      availabilityStatus: input.availabilityStatus ?? existing.availabilityStatus,
+      availableFrom:
+        input.availableFrom !== undefined
+          ? input.availableFrom
+            ? new Date(input.availableFrom)
+            : null
+          : existing.availableFrom,
     },
   });
 

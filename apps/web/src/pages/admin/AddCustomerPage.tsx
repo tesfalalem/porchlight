@@ -23,7 +23,7 @@ import { StatusBadge } from '../../components/common/StatusBadge';
 import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { createCustomer } from '../../services/customersApi';
 import { fetchApartments } from '../../services/apartmentsApi';
-import { formatPrice } from '../../utils/format';
+import { formatAvailabilityLabel, formatPrice } from '../../utils/format';
 import { getApiErrorMessage } from '../../lib/apiClient';
 
 // Safe date parsing & display helpers avoiding timezone shifts
@@ -483,7 +483,7 @@ export function AddCustomerPage() {
                   <option value="">— None (Prospect / General Lead) —</option>
                   {(apartmentsQuery.data ?? []).map((apt) => (
                     <option key={apt.id} value={apt.id}>
-                      Unit {apt.number} · {apt.name} — {formatPrice(apt.price)} ETB/mo ({apt.availabilityStatus})
+                      Unit {apt.number} · {apt.name} — {formatPrice(apt.price)}/mo ({formatAvailabilityLabel(apt.availableFrom)})
                     </option>
                   ))}
                 </select>
@@ -512,7 +512,7 @@ export function AddCustomerPage() {
                             Unit {selectedApartment.number} · {selectedApartment.type}
                           </p>
                         </div>
-                        <StatusBadge status={selectedApartment.availabilityStatus} />
+                        <StatusBadge availableFrom={selectedApartment.availableFrom} />
                       </div>
 
                       <div className="mt-2.5 flex flex-wrap items-center gap-3 text-xs text-slate-600">
@@ -820,7 +820,7 @@ export function AddCustomerPage() {
                       Unit {selectedApartment.number} — {selectedApartment.name}
                     </p>
                     <p className="text-slate-500">
-                      {formatPrice(selectedApartment.price)} ETB/mo
+                      {formatPrice(selectedApartment.price)} /mo
                     </p>
                     {(leaseStart || leaseEnd) && (
                       <div className="mt-2.5 rounded-lg border border-slate-200/80 bg-white p-2.5 text-[11px] space-y-1">

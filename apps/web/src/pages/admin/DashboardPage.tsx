@@ -8,11 +8,10 @@ import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { fetchDashboardStats } from '../../services/dashboardApi';
 
 const AVAIL_COLORS: Record<string, string> = {
-  Available:    '#10b981',
-  Upcoming:     '#f59e0b',
-  Occupied:     '#58595B',
-  'Coming Soon': '#f59e0b',
-  Unavailable:  '#ef4444',
+  'Available Now':   '#10b981',
+  'Future Move-In':  '#f59e0b',
+  Available:         '#10b981',
+  Upcoming:          '#f59e0b',
 };
 
 const INQUIRY_COLORS = ['#960048', '#c4336e', '#f59e0b', '#10b981', '#94a3b8'];
@@ -42,12 +41,11 @@ export function DashboardPage() {
           <Building2 className="h-4 w-4 text-accent" />
           <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Apartments</p>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-3">
           {[
             { label: 'Total Units', value: s.totalApartments, icon: Home, color: 'bg-navy-900/8 text-navy-900' },
-            { label: 'Available', value: s.available, icon: CheckCircle, color: 'bg-emerald-100 text-emerald-700' },
-            { label: 'Upcoming', value: s.upcoming ?? s.comingSoon, icon: Clock, color: 'bg-amber-100 text-amber-700' },
-            { label: 'Occupied', value: s.occupied, icon: Building2, color: 'bg-accent/10 text-accent' },
+            { label: 'Available (Immediate)', value: s.available, icon: CheckCircle, color: 'bg-emerald-100 text-emerald-700' },
+            { label: 'Future Move-In', value: s.upcoming, icon: Clock, color: 'bg-amber-100 text-amber-700' },
           ].map(({ label, value, icon: Icon, color }) => (
             <Link key={label} to="/admin/apartments" className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-navy-900/20">
               <div className="flex items-center justify-between">

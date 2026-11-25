@@ -16,6 +16,8 @@ function parseFilters(req: Request): apartmentService.ApartmentFilters {
     amenityIds,
     sort: typeof q.sort === 'string' ? (q.sort as apartmentService.ApartmentFilters['sort']) : undefined,
     includeArchived: q.includeArchived === 'true',
+    checkIn: typeof q.checkIn === 'string' ? q.checkIn : undefined,
+    checkOut: typeof q.checkOut === 'string' ? q.checkOut : undefined,
   };
 }
 
